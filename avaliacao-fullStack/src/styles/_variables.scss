@@ -1,0 +1,16 @@
+// REQUISITO AULA 02 e 03: Uso de Variáveis SCSS
+// Armazenam valores reutilizáveis no projeto (Cores, Tipografia e Breakpoints)
+
+// Cores base do projeto
+$bg-color: #f4f6f9;        // Cor de fundo global (Tipo: Hexadecimal/String)
+$primary-color: #0070f3;   // Cor primária/destaque
+$card-bg: #ffffff;         // Cor de fundo dos cards
+$text-color: #1a1a1a;      // Cor principal do texto
+$border-color: #e0e0e0;    // Cor das bordas
+
+// Tipografia
+$font-main: system-ui, -apple-system, sans-serif;
+
+// Breakpoints de Tela (Valores para a Responsividade)
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;

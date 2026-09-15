@@ -1,0 +1,18 @@
+// REQUISITO AULA 03: Responsividade com Mobile-First e Media Queries
+// Importa as variáveis sem necessidade de prefixos
+@use './variables' as *;
+
+// REQUISITO AULA 02: Pelo menos 1 Mixin em SCSS
+// Mixin para Breakpoint de Tablet (≥ 768px)
+@mixin tablet {
+  @media (min-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+// Mixin para Breakpoint de Desktop (≥ 1024px)
+@mixin desktop {
+  @media (min-width: $breakpoint-desktop) {
+    @content; // Injeta o bloco CSS aplicado dentro da media query
+  }
+}
