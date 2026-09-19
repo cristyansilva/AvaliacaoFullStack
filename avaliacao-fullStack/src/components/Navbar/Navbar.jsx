@@ -14,6 +14,7 @@ export default function Navbar() {
     { caminho: '/', rotulo: 'Painel de Monitorias' },
     { caminho: '/solicitar', rotulo: 'Solicitar Atendimento' },
     { caminho: '/monitores', rotulo: 'Corpo de Monitores' },
+    { caminho: '/comunidade', rotulo: 'Fórum (API)' },
     { caminho: '/sobre', rotulo: 'Sobre o Projeto (ODS 4)' }
   ];
 

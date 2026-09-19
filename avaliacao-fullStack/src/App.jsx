@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import SolicitarMonitoria from './pages/SolicitarMonitoria';
 import Monitores from './pages/Monitores';
 import Sobre from './pages/Sobre';
+import ComunidadeApi from './pages/ComunidadeApi';
 import { listaMonitoriasIniciaisMock } from './data/monitoriaData';
 
 /**
@@ -68,6 +69,7 @@ export default function App() {
               }
             />
             <Route path="/monitores" element={<Monitores />} />
+            <Route path="/comunidade" element={<ComunidadeApi />} />
             <Route path="/sobre" element={<Sobre />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
