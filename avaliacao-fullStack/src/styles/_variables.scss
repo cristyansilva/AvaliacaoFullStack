@@ -1,15 +1,28 @@
 // REQUISITO AULA 02 e 03: Uso de Variáveis SCSS
 // Armazenam valores reutilizáveis no projeto (Cores, Tipografia e Breakpoints)
 
-// Cores base do projeto
-$bg-color: #f4f6f9;        // Cor de fundo global (Tipo: Hexadecimal/String)
-$primary-color: #0070f3;   // Cor primária/destaque
-$card-bg: #ffffff;         // Cor de fundo dos cards
-$text-color: #1a1a1a;      // Cor principal do texto
-$border-color: #e0e0e0;    // Cor das bordas
+// Cores base do projeto (Monitoria Flow - Identidade Acadêmica)
+$bg-color: #f4f6f9;          // Cor de fundo global
+$primary-color: #0d6efd;     // Azul institucional FMP
+$primary-hover: #0b5ed7;     // Hover do botão primário
+$secondary-color: #495057;   // Tom secundário
+$card-bg: #ffffff;           // Cor de fundo dos cards
+$text-color: #1a1a1a;        // Cor principal do texto
+$text-muted: #6c757d;        // Texto atenuado/secundário
+$border-color: #e2e8f0;      // Cor das bordas
+
+// Cores semânticas de status
+$success-color: #198754;
+$success-bg: #d1e7dd;
+$warning-color: #b45309;
+$warning-bg: #fef3c7;
+$danger-color: #dc3545;
+$danger-bg: #f8d7da;
+$info-color: #0284c7;
+$info-bg: #e0f2fe;
 
 // Tipografia
-$font-main: system-ui, -apple-system, sans-serif;
+$font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 
 // Breakpoints de Tela (Valores para a Responsividade)
 $breakpoint-tablet: 768px;

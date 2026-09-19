@@ -16,3 +16,12 @@
     @content; // Injeta o bloco CSS aplicado dentro da media query
   }
 }
+
+// Mixin adicional para centralização flexível (Requisito Aula 02 - Mixins)
+@mixin flex-center($direction: row, $gap: 0.5rem) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: center;
+  justify-content: center;
+  gap: $gap;
+}
