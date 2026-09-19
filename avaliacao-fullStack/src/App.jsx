@@ -1,49 +1,93 @@
-import React, { useState } from 'react';
-// Importação da lista e da função auxiliar em JS da Aula 03
-import { listaProdutosMock, processarProdutos } from './utils/helpers';
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Navbar from './components/Navbar/Navbar';
+import Home from './pages/Home';
+import SolicitarMonitoria from './pages/SolicitarMonitoria';
+import Monitores from './pages/Monitores';
+import Sobre from './pages/Sobre';
+import { listaMonitoriasIniciaisMock } from './data/monitoriaData';
 
+/**
+ * REQUISITOS AULA 04 - REACT: COMPONENTES, HOOKS E ROTAS
+ * - Projeto React com Vite
+ * - Componentes reutilizáveis em components/ (Navbar, CardMonitoria, Badge, FormSolicitacao, FiltroBar)
+ * - useState em formulários, filtros, listas e inscrições
+ * - Renderização de listas com map() e key
+ * - Rotas com React Router (4 rotas ativas) e navegação com Link
+ */
 export default function App() {
-  // Estado para armazenar os produtos exibidos em tela
-  const [produtosExibidos, setProdutosExibidos] = useState(listaProdutosMock);
-  const [totalItens, setTotalItens] = useState(listaProdutosMock.length);
+  // Estado centralizado de monitorias disponíveis
+  const [monitorias, setMonitorias] = useState(listaMonitoriasIniciaisMock);
 
-  // REQUISITO AULA 03: Manipulação de Eventos em JavaScript
-  const handleFiltrar = () => {
-    // Executa a função JS criada em helpers.js passando R$ 50 como filtro
-    const resultado = processarProdutos(listaProdutosMock, 50);
-    
-    // Atualiza os estados React com o resultado do filtro JS
-    setProdutosExibidos(resultado.itens);
-    setTotalItens(resultado.total);
-  };
+  // Estado de solicitações cadastradas pelos acadêmicos (RF07 / RF08)
+  const [solicitacoes, setSolicitacoes] = useState([
+    {
+      id: 1,
+      nome: 'Marlon da Silva',
+      matricula: '202401889',
+      email: 'marlon.silva@aluno.fmp.edu.br',
+      disciplina: 'Estruturas de Dados',
+      tipo: 'Individual',
+      periodoPreferencial: 'Noite (18:00 - 19:30)',
+      topico: 'Dúvidas sobre balanceamento de Árvores AVL e rotações',
+      observacoes: 'Disponível às quartas-feiras',
+      status: 'Pendente de Atribuição',
+      dataRegistro: '18/09/2026'
+    }
+  ]);
 
-  const handleResetar = () => {
-    setProdutosExibidos(listaProdutosMock);
-    setTotalItens(listaProdutosMock.length);
+  const handleAdicionarSolicitacao = (novaSolicitacao) => {
+    setSolicitacoes((prev) => [novaSolicitacao, ...prev]);
   };
 
   return (
-    <main>
-<header className="header-container">
-  <h1>Avaliação Full Stack - Módulo 1</h1>
-  <p>Total de itens exibidos: <strong>{totalItens}</strong></p>
-  
-  <div className="button-group">
-    <button onClick={handleFiltrar}>Filtrar Disponíveis ≥ R$50</button>
-    <button onClick={handleResetar}>Mostrar Todos</button>
-  </div>
-</header>
+    <BrowserRouter>
+      <div className="app-container">
+        {/* Menu de navegação global com links do React Router */}
+        <Navbar />
 
-      {/* Grid responsivo controlado pelas Media Queries em SCSS */}
-      <section className="container-produtos">
-        {produtosExibidos.map((item) => (
-          <div key={item.id} className="card-item">
-            <h3>{item.nome}</h3>
-            <p><strong>Preço:</strong> R$ {item.preco.toFixed(2)}</p>
-            <p><strong>Status:</strong> {item.disponivel ? "Disponível" : "Indisponível"}</p>
+        {/* Área principal com roteamento dinâmico */}
+        <main className="app-content">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  monitorias={monitorias}
+                  onAtualizarMonitorias={setMonitorias}
+                />
+              }
+            />
+            <Route
+              path="/solicitar"
+              element={
+                <SolicitarMonitoria
+                  solicitacoes={solicitacoes}
+                  onAdicionarSolicitacao={handleAdicionarSolicitacao}
+                />
+              }
+            />
+            <Route path="/monitores" element={<Monitores />} />
+            <Route path="/sobre" element={<Sobre />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+
+        {/* Rodapé institucional */}
+        <footer className="app-footer">
+          <div className="app-footer__conteudo">
+            <p>
+              <strong>Monitoria Flow</strong> — Plataforma Acadêmica de Monitorias
+            </p>
+            <p>
+              Faculdade Municipal de Palhoça (FMP) • Análise e Desenvolvimento de Sistemas
+            </p>
+            <p className="app-footer__creditos">
+              Projeto Integrador III • Alinhado à ODS 4 da ONU (Educação de Qualidade)
+            </p>
           </div>
-        ))}
-      </section>
-    </main>
+        </footer>
+      </div>
+    </BrowserRouter>
   );
 }

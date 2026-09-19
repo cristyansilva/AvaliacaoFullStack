@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { listaDisciplinasMock } from '../../data/monitoriaData';
 import { validarSolicitacao } from '../../utils/helpers';
 

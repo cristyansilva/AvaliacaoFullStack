@@ -1,4 +1,3 @@
-import React from 'react';
 
 /**
  * Componente Reutilizável de Badge / Etiqueta de Status
