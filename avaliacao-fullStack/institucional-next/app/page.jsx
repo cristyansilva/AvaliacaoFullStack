@@ -195,7 +195,7 @@ export default function InstitutionalHome() {
           </nav>
 
           <a
-            href="https://avaliacao-fullstack.vercel.app"
+            href="https://avaliacao-full-stack.vercel.app"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 px-3.5 sm:px-4 h-9 text-xs sm:text-sm font-semibold rounded-md bg-fmp-ink text-white hover:bg-fmp-inkHover transition-colors"
@@ -391,7 +391,7 @@ export default function InstitutionalHome() {
             <a href="https://github.com/cristyansilva/AvaliacaoFullStack" target="_blank" rel="noreferrer" className="hover:text-slate-900 transition-colors">
               Repositório no GitHub
             </a>
-            <a href="https://avaliacao-fullstack.vercel.app" target="_blank" rel="noreferrer" className="hover:text-slate-900 transition-colors">
+            <a href="https://avaliacao-full-stack.vercel.app" target="_blank" rel="noreferrer" className="hover:text-slate-900 transition-colors">
               Aplicação React
             </a>
           </div>
