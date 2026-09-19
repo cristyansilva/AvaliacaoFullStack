@@ -154,3 +154,44 @@ export function validarSolicitacao(dados) {
     erros
   };
 }
+
+const MESES_ABREVIADOS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const DIAS_SEMANA_ABREVIADOS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+/**
+ * Converte uma data ISO (AAAA-MM-DD) nas partes exibidas no card de sessão
+ * Faz o parse manual para evitar deslocamento de fuso horário do construtor Date(string)
+ * @param {string} dataIso - Data no formato '2026-09-22'
+ * @returns {Object} { dia: '22', mes: 'set', semana: 'Ter', completa: '22/09/2026' }
+ */
+export function formatarDataSessao(dataIso = '') {
+  const [ano, mes, dia] = dataIso.split('-').map(Number);
+
+  if (!ano || !mes || !dia) {
+    return { dia: '--', mes: '', semana: '', completa: dataIso };
+  }
+
+  const data = new Date(ano, mes - 1, dia);
+
+  return {
+    dia: String(dia).padStart(2, '0'),
+    mes: MESES_ABREVIADOS[mes - 1],
+    semana: DIAS_SEMANA_ABREVIADOS[data.getDay()],
+    completa: `${String(dia).padStart(2, '0')}/${String(mes).padStart(2, '0')}/${ano}`
+  };
+}
+
+/**
+ * Gera as iniciais exibidas no avatar a partir do primeiro e do último nome
+ * Ignora preposições ('da', 'das', 'de') para evitar resultados como "Cd"
+ * @param {string} nomeCompleto - Ex: 'Cristyan das Neves'
+ * @returns {string} Ex: 'CN'
+ */
+export function obterIniciais(nomeCompleto = '') {
+  const partes = nomeCompleto.trim().split(/\s+/).filter(Boolean);
+  if (partes.length === 0) return '';
+
+  const primeira = partes[0];
+  const ultima = partes.length > 1 ? partes[partes.length - 1] : '';
+  return `${primeira[0]}${ultima ? ultima[0] : ''}`.toUpperCase();
+}

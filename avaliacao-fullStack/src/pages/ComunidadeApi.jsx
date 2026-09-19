@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Badge from '../components/Badge/Badge';
+import Icon from '../components/Icon/Icon';
 
 /**
  * REQUISITO AULA 05: Consumo de API Pública com Axios
@@ -51,7 +52,7 @@ export default function ComunidadeApi() {
             autor: `Acadêmico #${item.userId}`,
             categoria: CATEGORIAS_ACADEMICAS[index % CATEGORIAS_ACADEMICAS.length],
             respostasCount: (item.id * 3) % 11 + 1,
-            dataPublicacao: `${(index % 28) + 1}/09/2026`
+            dataPublicacao: `${String((index % 28) + 1).padStart(2, "0")}/09/2026`
           }));
 
           setPublicacoes(publicacoesFormatadas);
@@ -94,42 +95,45 @@ export default function ComunidadeApi() {
   return (
     <div className="pagina-comunidade">
       <header className="cabecalho-pagina">
-        <span className="cabecalho-pagina__tag">Requisito Aula 05 • Consumo de API Externa</span>
-        <h1>Fórum & Dicas da Comunidade Acadêmica</h1>
+        <span className="cabecalho-pagina__tag">Comunidade</span>
+        <h1>Fórum da comunidade</h1>
         <p>
-          Espaço integrado para troca de conhecimentos entre monitores e acadêmicos de ADS.
-          Os dados desta seção são sincronizados dinamicamente a partir de uma <strong>API REST pública</strong> utilizando <strong>Axios</strong>.
+          Dúvidas e dicas compartilhadas entre monitores e acadêmicos de ADS.
+          As publicações são carregadas de uma API REST pública via Axios.
         </p>
       </header>
 
       {/* Barra de pesquisa nos dados da API */}
       <div className="painel-filtro-monitores">
-        <label htmlFor="busca-comunidade">Pesquisar tópicos do fórum:</label>
-        <input
-          id="busca-comunidade"
-          type="text"
-          value={filtroTexto}
-          onChange={(e) => setFiltroTexto(e.target.value)}
-          placeholder="Ex: react, dados, algoritmos..."
-          className="input-custom"
-          style={{ maxWidth: '380px' }}
-        />
+        <label htmlFor="busca-comunidade">Buscar</label>
+        <div className="campo-com-icone">
+          <Icon name="busca" />
+          <input
+            id="busca-comunidade"
+            type="search"
+            value={filtroTexto}
+            onChange={(e) => setFiltroTexto(e.target.value)}
+            placeholder="Título, conteúdo ou categoria"
+            className="input-custom"
+          />
+        </div>
         <span className="texto-contagem">
-          Exibindo {publicacoesFiltradas.length} publicações
+          {publicacoesFiltradas.length} {publicacoesFiltradas.length === 1 ? 'publicação' : 'publicações'}
         </span>
       </div>
 
       {/* Tratamento de Estados: Carregando, Erro e Sucesso */}
       {carregando && (
-        <div className="estado-carregando">
+        <div className="estado-carregando" role="status">
           <div className="spinner"></div>
-          <p>Consultando API pública externa via Axios...</p>
+          <p>Carregando publicações…</p>
         </div>
       )}
 
       {erro && (
         <div className="alerta alerta--erro" role="alert">
-          <strong>Aviso:</strong> {erro}
+          <Icon name="alerta" size={18} />
+          <span>{erro}</span>
         </div>
       )}
 
@@ -141,7 +145,7 @@ export default function ComunidadeApi() {
             return (
               <article key={item.id} className="card-post-api">
                 <div className="card-post-api__topo">
-                  <span className="card-post-api__autor">👤 {item.autor}</span>
+                  <span className="card-post-api__autor"><Icon name="usuario" />{item.autor}</span>
                   <Badge variant="info">{item.categoria}</Badge>
                 </div>
 
@@ -155,17 +159,17 @@ export default function ComunidadeApi() {
 
                 <div className="card-post-api__rodape">
                   <div className="card-post-api__meta">
-                    <span>📅 {item.dataPublicacao}</span>
-                    <span>💬 {item.respostasCount} respostas</span>
+                    <span><Icon name="calendario" size={14} />{item.dataPublicacao}</span>
+                    <span><Icon name="mensagem" size={14} />{item.respostasCount} respostas</span>
                   </div>
 
                   <button
                     type="button"
-                    className="btn-curtir"
+                    className={`btn-curtir ${curtidasAtuais > 0 ? 'btn-curtir--ativo' : ''}`}
                     onClick={() => handleCurtir(item.id)}
-                    aria-label="Curtir publicação"
                   >
-                    ❤️ {curtidasAtuais > 0 ? `${curtidasAtuais} Curtidas` : 'Curtir'}
+                    <Icon name="coracao" size={14} />
+                    {curtidasAtuais > 0 ? `${curtidasAtuais} ${curtidasAtuais === 1 ? 'curtida' : 'curtidas'}` : 'Curtir'}
                   </button>
                 </div>
               </article>

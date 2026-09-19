@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import CardMonitoria from '../components/CardMonitoria/CardMonitoria';
 import FiltroBar from '../components/FiltroBar/FiltroBar';
+import Icon from '../components/Icon/Icon';
 import {
   filtrarMonitorias,
   calcularEstatisticasMonitorias
@@ -53,7 +54,7 @@ export default function Home({ monitorias, onAtualizarMonitorias }) {
             : item
         )
       );
-      exibirNotificacao('Inscrição cancelada com sucesso.', 'info');
+      exibirNotificacao('Inscrição cancelada. A vaga voltou a ficar disponível.', 'info');
     } else {
       // Realizar inscrição: decrementa vaga
       const itemAlvo = monitorias.find((m) => m.id === idMonitoria);
@@ -76,7 +77,7 @@ export default function Home({ monitorias, onAtualizarMonitorias }) {
           return item;
         })
       );
-      exibirNotificacao(`Parabéns! Vaga reservada para a monitoria de ${itemAlvo.disciplina}!`, 'sucesso');
+      exibirNotificacao(`Vaga reservada em ${itemAlvo.disciplina}.`, 'sucesso');
     }
   };
 
@@ -87,48 +88,48 @@ export default function Home({ monitorias, onAtualizarMonitorias }) {
 
   return (
     <div className="pagina-home">
-      {/* Hero Section */}
+      {/* Cabeçalho da página */}
       <section className="hero-banner">
         <div className="hero-banner__conteudo">
-          <span className="hero-banner__tag">Projeto Integrador III • ADS FMP</span>
-          <h1>Plataforma de Monitorias Acadêmicas</h1>
+          <span className="hero-banner__tag">Projeto Integrador III · ADS FMP</span>
+          <h1>Monitorias acadêmicas</h1>
           <p>
-            O <strong>Monitoria Flow</strong> simplifica o apoio aos estudantes de Análise e
-            Desenvolvimento de Sistemas, conectando monitores experientes a alunos que desejam
-            superar desafios e evoluir na programação.
+            Encontre uma sessão com monitores de Análise e Desenvolvimento de Sistemas,
+            reserve sua vaga e acompanhe suas inscrições em um só lugar.
           </p>
-          <div className="hero-banner__badges">
-            <span>🎯 ODS 4 - Educação de Qualidade</span>
-            <span>👥 Atendimento Presencial e Remoto</span>
-            <span>⚡ Agendamento Simplificado</span>
-          </div>
         </div>
+        <ul className="hero-banner__badges">
+          <li>ODS 4 · Educação de Qualidade</li>
+          <li>Presencial e remoto</li>
+          <li>Individual ou em grupo</li>
+        </ul>
       </section>
 
-      {/* Cards de Métricas e Estatísticas (Flexbox + Box Model) */}
-      <section className="metricas-grid">
+      {/* Faixa de métricas (Flexbox + Box Model) */}
+      <section className="metricas-grid" aria-label="Resumo do semestre">
         <div className="card-metrica">
           <span className="card-metrica__numero">{estatisticas.totalMonitorias}</span>
-          <span className="card-metrica__rotulo">Monitorias Oferecidas</span>
+          <span className="card-metrica__rotulo">Sessões oferecidas</span>
         </div>
         <div className="card-metrica">
           <span className="card-metrica__numero">{estatisticas.totalVagasDisponiveis}</span>
-          <span className="card-metrica__rotulo">Vagas Abertas</span>
+          <span className="card-metrica__rotulo">Vagas abertas</span>
         </div>
         <div className="card-metrica">
           <span className="card-metrica__numero">{estatisticas.totalDisciplinasDistintas}</span>
-          <span className="card-metrica__rotulo">Disciplinas Atendidas</span>
+          <span className="card-metrica__rotulo">Disciplinas atendidas</span>
         </div>
         <div className="card-metrica card-metrica--destaque">
           <span className="card-metrica__numero">{inscricoesUsuario.length}</span>
-          <span className="card-metrica__rotulo">Suas Inscrições Ativas</span>
+          <span className="card-metrica__rotulo">Suas inscrições</span>
         </div>
       </section>
 
-      {/* Feedback flutuante de ação */}
+      {/* Feedback de ação */}
       {notificacao && (
         <div className={`alerta alerta--${notificacao.tipo}`} role="alert">
-          {notificacao.texto}
+          <Icon name={notificacao.tipo === 'erro' ? 'alerta' : 'confirmado'} size={18} />
+          <span>{notificacao.texto}</span>
         </div>
       )}
 
@@ -146,13 +147,13 @@ export default function Home({ monitorias, onAtualizarMonitorias }) {
 
       {/* Listagem de Monitorias com .map() e key */}
       <section className="secao-monitorias">
-        <h2 className="secao-titulo">Sessões de Monitoria Disponíveis</h2>
+        <h2 className="secao-titulo">Próximas sessões</h2>
 
         {monitoriasFiltradas.length === 0 ? (
           <div className="estado-vazio">
             <p>Nenhuma sessão encontrada para os filtros selecionados.</p>
             <button type="button" className="btn-limpar" onClick={handleLimparFiltros}>
-              Restaurar Lista Completa
+              Limpar filtros
             </button>
           </div>
         ) : (

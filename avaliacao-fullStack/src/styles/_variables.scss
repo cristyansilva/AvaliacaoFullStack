@@ -2,27 +2,41 @@
 // Armazenam valores reutilizáveis no projeto (Cores, Tipografia e Breakpoints)
 
 // Cores base do projeto (Monitoria Flow - Identidade Acadêmica)
-$bg-color: #f4f6f9;          // Cor de fundo global
-$primary-color: #0d6efd;     // Azul institucional FMP
-$primary-hover: #0b5ed7;     // Hover do botão primário
-$secondary-color: #495057;   // Tom secundário
+// Direção: azul-marinho institucional ("tinta"), neutros frios e um acento ocre
+// usado apenas em indicadores (item ativo, barra de ocupação, número em destaque)
+$bg-color: #f5f6f8;          // Cor de fundo global
+$primary-color: #1f3a68;     // Azul-marinho institucional
+$primary-hover: #172d52;     // Hover do botão primário
+$primary-soft: #eaeff7;      // Fundo suave para estados selecionados
+$accent-color: #b8862b;      // Acento ocre (somente indicadores, nunca texto corrido)
+$secondary-color: #3b4555;   // Tom secundário
 $card-bg: #ffffff;           // Cor de fundo dos cards
-$text-color: #1a1a1a;        // Cor principal do texto
-$text-muted: #6c757d;        // Texto atenuado/secundário
-$border-color: #e2e8f0;      // Cor das bordas
+$surface-muted: #f9fafb;     // Superfície rebaixada (blocos internos)
+$text-color: #141b26;        // Cor principal do texto
+$text-muted: #5b6576;        // Texto atenuado/secundário (contraste AA sobre branco)
+$border-color: #e1e4ea;      // Cor das bordas
+$border-strong: #c9cfd8;     // Bordas de campos de formulário
 
 // Cores semânticas de status
-$success-color: #198754;
-$success-bg: #d1e7dd;
-$warning-color: #b45309;
-$warning-bg: #fef3c7;
-$danger-color: #dc3545;
-$danger-bg: #f8d7da;
-$info-color: #0284c7;
-$info-bg: #e0f2fe;
+$success-color: #1a6b3c;
+$success-bg: #e7f3ec;
+$warning-color: #8a5a0b;
+$warning-bg: #fbf0dc;
+$danger-color: #b3261e;
+$danger-bg: #fcebea;
+$info-color: #1f4f86;
+$info-bg: #e8eff8;
 
 // Tipografia
-$font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+$font-main: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+// Forma e profundidade
+$radius: 8px;
+$radius-sm: 6px;
+$shadow-sm: 0 1px 2px rgba(20, 27, 38, 0.05);
+$shadow-md: 0 4px 14px rgba(20, 27, 38, 0.08);
+$focus-ring: 0 0 0 3px rgba(31, 58, 104, 0.18);
 
 // Breakpoints de Tela (Valores para a Responsividade)
 $breakpoint-tablet: 768px;

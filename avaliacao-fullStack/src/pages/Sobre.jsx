@@ -1,3 +1,4 @@
+import { obterIniciais } from '../utils/helpers';
 
 /**
  * Página Sobre o Projeto Monitoria Flow
@@ -5,10 +6,10 @@
  */
 export default function Sobre() {
   const equipe = [
-    { nome: 'Cristyan das Neves Silva', papel: 'Desenvolvedor Full Stack • Arquitetura Front-End' },
-    { nome: 'Marlon da Silva', papel: 'Desenvolvedor Full Stack • Modelagem e Integração' },
-    { nome: 'Lauren Helena De Oliveira Leao', papel: 'Desenvolvedora Full Stack • UI/UX e Requisitos' },
-    { nome: 'Taíse da Rosa', papel: 'Desenvolvedora Full Stack • Qualidade e Testes' }
+    { nome: 'Cristyan das Neves Silva', papel: 'Desenvolvedor Full Stack · Arquitetura front-end' },
+    { nome: 'Marlon da Silva', papel: 'Desenvolvedor Full Stack · Modelagem e integração' },
+    { nome: 'Lauren Helena De Oliveira Leao', papel: 'Desenvolvedora Full Stack · UI/UX e requisitos' },
+    { nome: 'Taíse da Rosa', papel: 'Desenvolvedora Full Stack · Qualidade e testes' }
   ];
 
   const pilaresOds4 = [
@@ -33,7 +34,7 @@ export default function Sobre() {
   return (
     <div className="pagina-sobre">
       <header className="cabecalho-pagina">
-        <span className="cabecalho-pagina__tag">Faculdade Municipal de Palhoça • ADS</span>
+        <span className="cabecalho-pagina__tag">Faculdade Municipal de Palhoça · ADS</span>
         <h1>Sobre o Monitoria Flow</h1>
         <p>
           Projeto Integrador desenvolvido para fortalecer o ecossistema educacional de tecnologia,
@@ -42,7 +43,7 @@ export default function Sobre() {
       </header>
 
       <section className="sobre-secao">
-        <h2>Visão Geral da Plataforma</h2>
+        <h2>Visão geral</h2>
         <p>
           O <strong>Monitoria Flow</strong> nasceu da necessidade de conectar estudantes em fase de aprendizado
           com monitores qualificados. O sistema organiza agendas, centraliza materiais de apoio, gerencia
@@ -51,10 +52,11 @@ export default function Sobre() {
       </section>
 
       <section className="sobre-secao">
-        <h2>Compromisso com o ODS 4 da ONU (Educação de Qualidade)</h2>
+        <h2>Compromisso com o ODS 4 — Educação de Qualidade</h2>
         <div className="grid-ods">
           {pilaresOds4.map((item, idx) => (
             <div key={idx} className="card-ods">
+              <span className="card-ods__indice">{String(idx + 1).padStart(2, '0')}</span>
               <h3>{item.titulo}</h3>
               <p>{item.descricao}</p>
             </div>
@@ -65,13 +67,13 @@ export default function Sobre() {
       <section className="sobre-secao">
         <h2>Equipe do Projeto Integrador III</h2>
         <p className="texto-orientacao">
-          <strong>Professora Orientadora:</strong> Daniela Amorim
+          <strong>Orientação:</strong> Profa. Daniela Amorim
         </p>
         <div className="grid-equipe">
           {equipe.map((membro, idx) => (
             <div key={idx} className="card-membro">
               <div className="card-membro__avatar">
-                {membro.nome.split(' ').map((n) => n[0]).slice(0, 2).join('')}
+                {obterIniciais(membro.nome)}
               </div>
               <div className="card-membro__info">
                 <h3>{membro.nome}</h3>
@@ -83,7 +85,7 @@ export default function Sobre() {
       </section>
 
       <section className="sobre-secao">
-        <h2>Stack Tecnológica & Engenharia</h2>
+        <h2>Tecnologias</h2>
         <div className="tecnologias-lista">
           <span className="tag-tech">React 19</span>
           <span className="tag-tech">Vite</span>

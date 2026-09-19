@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { listaDisciplinasMock } from '../../data/monitoriaData';
 import { validarSolicitacao } from '../../utils/helpers';
+import Icon from '../Icon/Icon';
 
 /**
  * Componente Reutilizável de Formulário para Solicitação de Monitoria
@@ -68,7 +69,7 @@ export default function FormSolicitacao({ onSalvarSolicitacao }) {
     // Limpa formulário e exibe mensagem de sucesso
     setFormData(estadoInicial);
     setErros({});
-    setMensagemSucesso('Sua solicitação de monitoria foi enviada com sucesso! Um monitor entrará em contato em breve.');
+    setMensagemSucesso('Solicitação registrada. O monitor da disciplina entrará em contato pelo e-mail informado.');
 
     setTimeout(() => {
       setMensagemSucesso('');
@@ -79,13 +80,14 @@ export default function FormSolicitacao({ onSalvarSolicitacao }) {
     <form className="form-solicitacao" onSubmit={handleSubmit} noValidate>
       {mensagemSucesso && (
         <div className="alerta alerta--sucesso" role="alert">
-          <strong>✅ Sucesso!</strong> {mensagemSucesso}
+          <Icon name="confirmado" size={18} />
+          <span>{mensagemSucesso}</span>
         </div>
       )}
 
       <div className="form-solicitacao__grid">
         <div className="form-campo">
-          <label htmlFor="nome">Nome Completo: *</label>
+          <label htmlFor="nome">Nome completo <span className="obrigatorio" aria-hidden="true">*</span></label>
           <input
             id="nome"
             name="nome"
@@ -99,7 +101,7 @@ export default function FormSolicitacao({ onSalvarSolicitacao }) {
         </div>
 
         <div className="form-campo">
-          <label htmlFor="matricula">Matrícula FMP: *</label>
+          <label htmlFor="matricula">Matrícula <span className="obrigatorio" aria-hidden="true">*</span></label>
           <input
             id="matricula"
             name="matricula"
@@ -113,7 +115,7 @@ export default function FormSolicitacao({ onSalvarSolicitacao }) {
         </div>
 
         <div className="form-campo">
-          <label htmlFor="email">E-mail Institucional: *</label>
+          <label htmlFor="email">E-mail institucional <span className="obrigatorio" aria-hidden="true">*</span></label>
           <input
             id="email"
             name="email"
@@ -127,7 +129,7 @@ export default function FormSolicitacao({ onSalvarSolicitacao }) {
         </div>
 
         <div className="form-campo">
-          <label htmlFor="disciplina">Disciplina Desejada: *</label>
+          <label htmlFor="disciplina">Disciplina <span className="obrigatorio" aria-hidden="true">*</span></label>
           <select
             id="disciplina"
             name="disciplina"
@@ -147,7 +149,7 @@ export default function FormSolicitacao({ onSalvarSolicitacao }) {
         </div>
 
         <div className="form-campo">
-          <label htmlFor="tipo">Formato do Atendimento:</label>
+          <label htmlFor="tipo">Formato</label>
           <select
             id="tipo"
             name="tipo"
@@ -155,13 +157,13 @@ export default function FormSolicitacao({ onSalvarSolicitacao }) {
             onChange={handleChange}
             className="select-custom"
           >
-            <option value="Individual">Individual (1 a 1 para sanar dúvidas pontuais)</option>
-            <option value="Coletiva">Coletiva (Grupo de estudos ou revisão)</option>
+            <option value="Individual">Individual — dúvidas pontuais, 1 a 1</option>
+            <option value="Coletiva">Coletiva — grupo de estudo ou revisão</option>
           </select>
         </div>
 
         <div className="form-campo">
-          <label htmlFor="periodoPreferencial">Horário Preferencial:</label>
+          <label htmlFor="periodoPreferencial">Horário preferencial</label>
           <select
             id="periodoPreferencial"
             name="periodoPreferencial"
@@ -178,7 +180,7 @@ export default function FormSolicitacao({ onSalvarSolicitacao }) {
       </div>
 
       <div className="form-campo form-campo--full">
-        <label htmlFor="topico">Dúvida / Conteúdo que precisa de apoio: *</label>
+        <label htmlFor="topico">Conteúdo em que precisa de apoio <span className="obrigatorio" aria-hidden="true">*</span></label>
         <textarea
           id="topico"
           name="topico"
@@ -192,7 +194,7 @@ export default function FormSolicitacao({ onSalvarSolicitacao }) {
       </div>
 
       <div className="form-campo form-campo--full">
-        <label htmlFor="observacoes">Observações Adicionais (opcional):</label>
+        <label htmlFor="observacoes">Observações <span className="opcional">(opcional)</span></label>
         <input
           id="observacoes"
           name="observacoes"
@@ -206,7 +208,7 @@ export default function FormSolicitacao({ onSalvarSolicitacao }) {
 
       <div className="form-solicitacao__acoes">
         <button type="submit" className="btn-enviar">
-          Registrar Solicitação de Monitoria
+          Enviar solicitação
         </button>
       </div>
     </form>

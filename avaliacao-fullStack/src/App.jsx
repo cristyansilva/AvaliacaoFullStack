@@ -78,14 +78,12 @@ export default function App() {
         {/* Rodapé institucional */}
         <footer className="app-footer">
           <div className="app-footer__conteudo">
-            <p>
-              <strong>Monitoria Flow</strong> — Plataforma Acadêmica de Monitorias
-            </p>
-            <p>
-              Faculdade Municipal de Palhoça (FMP) • Análise e Desenvolvimento de Sistemas
+            <p className="app-footer__marca">
+              <strong>Monitoria Flow</strong>
+              <span>Faculdade Municipal de Palhoça · Análise e Desenvolvimento de Sistemas</span>
             </p>
             <p className="app-footer__creditos">
-              Projeto Integrador III • Alinhado à ODS 4 da ONU (Educação de Qualidade)
+              Projeto Integrador III · ODS 4 — Educação de Qualidade
             </p>
           </div>
         </footer>
