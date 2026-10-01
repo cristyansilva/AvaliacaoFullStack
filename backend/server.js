@@ -7,7 +7,7 @@ app.use(express.json());
 let usuarios = [
     { id: 1, nome: "Marlon da Silva", email: "marlon@email.com" },
     { id: 2, nome: "Taíse da Rosa", email: "taise@email.com" },
-    { id: 3, nome: "Cristyan da Silva", email: "cristyan@email.com" },
+    { id: 3, nome: "Cristyan Silva", email: "cristyan@email.com" },
     { id: 4, nome: "Lauren Leão", email: "lauren@email.com" },
 ];
 
