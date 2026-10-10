@@ -1,8 +1,45 @@
 const express = require('express');
-const app = express();
-const porta = 3001;
+require('dotenv').config();
 
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+// MIDDLEWARE GLOBAL: lê JSON do body (sem isso, req.body = undefined)
 app.use(express.json());
+
+// MIDDLEWARE 1: o "porteiro" que registra tudo (logs)
+function registrarLog(req, res, next) {
+    console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`);
+    next(); // SEMPRE chamar next(), senão a requisição trava
+}
+app.use(registrarLog);
+
+// MIDDLEWARE 2: validação de dados de usuário (usado no POST e PUT)
+function validarUsuario(req, res, next) {
+    const { nome, email } = req.body;
+    if (!nome) {
+        return res.status(400).json({ mensagem: 'O nome é obrigatório' });
+    }
+    if (!email) {
+        return res.status(400).json({ mensagem: 'O e-mail é obrigatório' });
+    }
+    next();
+}
+
+// MIDDLEWARE 3: validação de dados de monitoria (usado no POST e PUT)
+function validarMonitoria(req, res, next) {
+    const { disciplina, monitor, data } = req.body;
+    if (!disciplina) {
+        return res.status(400).json({ mensagem: 'A disciplina é obrigatória' });
+    }
+    if (!monitor) {
+        return res.status(400).json({ mensagem: 'O monitor é obrigatório' });
+    }
+    if (!data) {
+        return res.status(400).json({ mensagem: 'A data é obrigatória' });
+    }
+    next();
+}
 
 let usuarios = [
     { id: 1, nome: "Marlon da Silva", email: "marlon@email.com" },
@@ -34,25 +71,23 @@ app.get('/api/usuarios/:id', (req, res) => {
 });
 
 // 3. POST /api/usuarios - Cria um novo usuário (Status Code: 201 ou 400)
-app.post('/api/usuarios', (req, res) => {
+app.post('/api/usuarios', validarUsuario, (req, res) => {
     const { nome, email } = req.body;
 
-    if(!nome || !email) {
-        return res.status(400).json({ mensagem: 'Nome e e-mail são obrigatórios.' });
-    }
-
     const novoUsuario = {
-        id: usuarios.length > 0 ? usuarios[usuarios.length - 1].id + 1 : 1, nome, email
+        id: usuarios.length > 0 ? usuarios[usuarios.length - 1].id + 1 : 1,
+        nome,
+        email
     };
 
     usuarios.push(novoUsuario);
 
-    res.status(201).json(novoUsuario);
+    return res.status(201).json(novoUsuario);
 });
 
 // 4. GET /api/monitorias - Retorna a lista de monitorias (Status Code: 200)
 app.get('/api/monitorias', (req, res) => {
-    res.status(200).json(monitorias);
+    return res.status(200).json(monitorias);
 });
 
 // 5. GET /api/monitorias/:id - Retorna uma monitoria específica pelo ID (Status Code: 200 ou 404)
@@ -64,16 +99,12 @@ app.get('/api/monitorias/:id', (req, res) => {
         return res.status(404).json({ mensagem: 'Monitoria não encontrada.' });
     }
 
-    res.status(200).json(monitoria);
+    return res.status(200).json(monitoria);
 });
 
 // 6. POST /api/monitorias - Cria uma nova monitoria (Status Code: 201 ou 400)
-app.post('/api/monitorias', (req, res) => {
+app.post('/api/monitorias', validarMonitoria, (req, res) => {
     const { disciplina, monitor, data } = req.body;
-
-    if(!disciplina || !monitor || !data) {
-        return res.status(400).json({ mensagem: 'Disciplina, monitor e data são obrigatórios.' });
-    }
 
     const novaMonitoria = {
         id: monitorias.length > 0 ? monitorias[monitorias.length - 1].id + 1 : 1,
@@ -84,9 +115,9 @@ app.post('/api/monitorias', (req, res) => {
 
     monitorias.push(novaMonitoria);
 
-    res.status(201).json(novaMonitoria);
+    return res.status(201).json(novaMonitoria);
 });
 
-app.listen(porta, () => {
-    console.log(`O SERVIDOR está rodando na porta ${porta}.`);
+app.listen(PORT, () => {
+    console.log(`O SERVIDOR está rodando na porta ${PORT}.`);
 });
