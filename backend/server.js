@@ -53,12 +53,12 @@ let monitorias = [
     { id: 2, disciplina: "Programação Web", monitor: "Taíse da Rosa", data: "2026-10-18" },
 ];
 
-// 1. GET /api/usuarios - Retorna a lista completa de usuários em JSON (Status Code: 200)
+// 1. GET /api/usuarios - Retorna a lista completa de usuários em JSON
 app.get('/api/usuarios', (req, res) => {
     res.status(200).json(usuarios);
 });
 
-// 2. GET /api/usuarios/:id - Retorna um usuário específico pelo ID (Status Code: 200 ou 404)
+// 2. GET /api/usuarios/:id - Retorna um usuário específico pelo ID
 app.get('/api/usuarios/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const usuario = usuarios.find(u => u.id === id)
@@ -70,7 +70,7 @@ app.get('/api/usuarios/:id', (req, res) => {
     res.status(200).json(usuario);
 });
 
-// 3. POST /api/usuarios - Cria um novo usuário (Status Code: 201 ou 400)
+// 3. POST /api/usuarios - Cria um novo usuário
 app.post('/api/usuarios', validarUsuario, (req, res) => {
     const { nome, email } = req.body;
 
@@ -85,12 +85,43 @@ app.post('/api/usuarios', validarUsuario, (req, res) => {
     return res.status(201).json(novoUsuario);
 });
 
-// 4. GET /api/monitorias - Retorna a lista de monitorias (Status Code: 200)
+// 4. PUT /api/usuarios/:id - Atualiza um usuário existente
+app.put('/api/usuarios/:id', validarUsuario, (req, res) => {
+    const id = Number(req.params.id);
+    const usuario = usuarios.find(u => u.id === id);
+
+    if(!usuario) {
+        return res.status(404).json({ mensagem: "Usuário não encontrado!" });
+    }
+
+    const { nome, email } = req.body;
+
+    usuario.nome = nome;
+    usuario.email = email;
+
+    return res.status(200).json(usuario);
+});
+
+// 5. DELETE /api/usuarios/:id - Remove um usuário existente
+app.delete('/api/usuarios/:id', (req, res) => {
+    const id = Number(req.params.id);
+    const usuario = usuarios.find(u => u.id === id);
+
+    if(!usuario) {
+        return res.status(404).json({ mensagem: "Usuário não encontrado!" });
+    }
+
+    usuarios = usuarios.filter(u => u.id !== id);
+
+    return res.status(200).json({ mensagem: "Usuário removido com sucesso!" });
+});
+
+// 6. GET /api/monitorias - Retorna a lista de monitorias (Status Code: 200)
 app.get('/api/monitorias', (req, res) => {
     return res.status(200).json(monitorias);
 });
 
-// 5. GET /api/monitorias/:id - Retorna uma monitoria específica pelo ID (Status Code: 200 ou 404)
+// 7. GET /api/monitorias/:id - Retorna uma monitoria específica pelo ID (Status Code: 200 ou 404)
 app.get('/api/monitorias/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const monitoria = monitorias.find(m => m.id === id);
@@ -102,7 +133,7 @@ app.get('/api/monitorias/:id', (req, res) => {
     return res.status(200).json(monitoria);
 });
 
-// 6. POST /api/monitorias - Cria uma nova monitoria (Status Code: 201 ou 400)
+// 8. POST /api/monitorias - Cria uma nova monitoria (Status Code: 201 ou 400)
 app.post('/api/monitorias', validarMonitoria, (req, res) => {
     const { disciplina, monitor, data } = req.body;
 
@@ -117,6 +148,43 @@ app.post('/api/monitorias', validarMonitoria, (req, res) => {
 
     return res.status(201).json(novaMonitoria);
 });
+
+// 9. PUT /api/monitorias/:id - Atualiza uma monitoria existente
+app.put('/api/monitorias/:id', validarMonitoria, (req, res) => {
+    const id = Number(req.params.id);
+    const monitoria = monitorias.find(m => m.id === id);
+
+    if(!monitoria) {
+        return res.status(404).json({ mensagem: "Monitoria não encontrada!" });
+    }
+
+    const { disciplina, monitor, data } = req.body;
+
+    monitoria.disciplina = disciplina;
+    monitoria.monitor = monitor;
+    monitoria.data = data;
+
+    return res.status(200).json(monitoria);
+});
+
+// 10. DELETE /api/monitorias/:id - Remove uma monitoria existente
+app.delete('/api/monitorias/:id', (req, res) => {
+    const id = Number(req.params.id);
+    const monitoria = monitorias.find(m => m.id === id);
+
+    if (!monitoria) {
+        return res.status(404).json({ mensagem: "Monitoria não encontrada!" });
+    }
+
+    monitorias = monitorias.filter(m => m.id !== id);
+
+    return res.status(200).json({ mensagem: "Monitoria removida com sucesso!" });
+});
+
+app.use((req, res) => {
+    return res.status(404).json({ mensagem: "Rota não encontrada!" });
+});
+
 
 app.listen(PORT, () => {
     console.log(`O SERVIDOR está rodando na porta ${PORT}.`);
