@@ -184,23 +184,28 @@ app.post('/api/monitorias', validarMonitoria, (req, res) => {
     return res.status(201).json(novaMonitoria);
 });
 
-// 9. PUT /api/monitorias/:id - Atualiza uma monitoria existente
-app.put('/api/monitorias/:id', validarMonitoria, (req, res) => {
-    const id = Number(req.params.id);
-    const monitoria = monitorias.find(m => m.id === id);
-
-    if(!monitoria) {
-        return res.status(404).json({ mensagem: "Monitoria não encontrada!" });
-    }
-
+// 9. PUT /api/monitorias/:id - Atualiza uma monitoria existente no banco de dados
+app.put('/api/monitorias/:id', validarMonitoria, async (req, res) => {
+    const { id } = req.params;
     const { disciplina, monitor, data } = req.body;
 
-    monitoria.disciplina = disciplina;
-    monitoria.monitor = monitor;
-    monitoria.data = data;
+    try {
+        const resultado = await db.query(
+            'UPDATE monitorias SET disciplina = $1, monitor = $2, data = $3 WHERE id = $4 RETURNING *',
+            [disciplina, monitor, data, id]
+        );
 
-    return res.status(200).json(monitoria);
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ mensagem: 'Monitoria não encontrada!' });
+        }
+
+        return res.status(200).json(resultado.rows[0]);
+    } catch (error) {
+        console.error(`Erro ao atualizar usuário ${id}:, error`);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao atualizar monitoria.' });
+    }
 });
+
 
 // 10. DELETE /api/monitorias/:id - Remove uma monitoria existente
 app.delete('/api/monitorias/:id', (req, res) => {
