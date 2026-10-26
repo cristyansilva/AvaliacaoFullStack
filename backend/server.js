@@ -1,4 +1,6 @@
 const express = require('express');
+const db = require('./db');
+
 require('dotenv').config();
 
 const app = express();
@@ -53,21 +55,33 @@ let monitorias = [
     { id: 2, disciplina: "Programação Web", monitor: "Taíse da Rosa", data: "2026-10-18" },
 ];
 
-// 1. GET /api/usuarios - Retorna a lista completa de usuários em JSON
-app.get('/api/usuarios', (req, res) => {
-    res.status(200).json(usuarios);
+// 1. GET /api/usuarios - busca e retorna todos os usuários no banco de dados
+app.get('/api/usuarios', async (req, res) => {
+    try {
+        const resultado = await db.query('SELECT * FROM usuarios');
+        return res.status(200).json(resultado.rows);
+    } catch (error) {
+        console.error(`Erro ao buscar usuários: `, error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao buscar usuários.' });
+    } 
 });
 
-// 2. GET /api/usuarios/:id - Retorna um usuário específico pelo ID
-app.get('/api/usuarios/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const usuario = usuarios.find(u => u.id === id)
+// 2. GET /api/usuarios/:id - Retorna um usuário específico por ID no banco
+app.get('/api/usuarios/:id', async (req, res) => {
+    const { id } = req.params;
 
-    if(!usuario) {
-        return res.status(404).json({ mensagem: 'Usuário não encontrado.' });
+    try {
+        const resultado = await db.query('SELECT * FROM usuarios WHERE id = $1', [id]);
+    
+        if(resultado.rows.length === 0) {
+            return res.status(404).json({ mensagem: 'Usuário não encontrado.' });
+        }
+
+        return res.status(200).json(resultado.rows[0]);
+    } catch (error) {
+        console.error(`Erro ao buscar usuário ${id}:`, error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao buscar o usuário.' });
     }
-
-    res.status(200).json(usuario);
 });
 
 // 3. POST /api/usuarios - Cria um novo usuário
@@ -116,21 +130,32 @@ app.delete('/api/usuarios/:id', (req, res) => {
     return res.status(200).json({ mensagem: "Usuário removido com sucesso!" });
 });
 
-// 6. GET /api/monitorias - Retorna a lista de monitorias (Status Code: 200)
-app.get('/api/monitorias', (req, res) => {
-    return res.status(200).json(monitorias);
+// 6. GET /api/monitorias - busca e retorna todos as monitorias no banco de dados
+app.get('/api/monitorias', async (req, res) => {
+    try {
+        const resultado = await db.query('SELECT * FROM monitorias');
+        return res.status(200).json(resultado.rows);
+    } catch (error) {
+        console.error('Erro ao buscar monitorias:', error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao buscar monitorias.' });
+    }
 });
 
 // 7. GET /api/monitorias/:id - Retorna uma monitoria específica pelo ID (Status Code: 200 ou 404)
-app.get('/api/monitorias/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const monitoria = monitorias.find(m => m.id === id);
-
-    if(!monitoria) {
-        return res.status(404).json({ mensagem: 'Monitoria não encontrada.' });
+app.get('/api/monitorias/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const resultado = await db.query('SELECT * FROM monitorias WHERE id = $1', [id]);
+    
+        if(resultado.rows.length === 0) {
+            return res.status(404).json({ mensagem: 'Monitoria não encontrada.' });
+        }
+    
+        return res.status(200).json(resultado.rows[0]);
+    } catch (error) {
+        console.error(`Erro ao buscar monitorias ${id}:`, error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao buscar a monitoria.' });
     }
-
-    return res.status(200).json(monitoria);
 });
 
 // 8. POST /api/monitorias - Cria uma nova monitoria (Status Code: 201 ou 400)
