@@ -207,18 +207,22 @@ app.put('/api/monitorias/:id', validarMonitoria, async (req, res) => {
 });
 
 
-// 10. DELETE /api/monitorias/:id - Remove uma monitoria existente
-app.delete('/api/monitorias/:id', (req, res) => {
-    const id = Number(req.params.id);
-    const monitoria = monitorias.find(m => m.id === id);
+// 10. DELETE /api/monitorias/:id - Remove uma monitoria do banco de dados
+app.delete('/api/monitorias/:id', async (req, res) => {
+    const { id } = req.params;
 
-    if (!monitoria) {
-        return res.status(404).json({ mensagem: "Monitoria não encontrada!" });
+    try {
+        const resultado = await db.query('DELETE FROM monitorias WHERE id = $1 RETURNING *', [id]);
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ mensagem: 'Monitoria não encontrada!' });
+        }
+
+        return res.status(200).json({ mensagem: 'Monitoria removida com sucesso!' });
+    } catch (error) {
+        console.error(`Erro ao atualizar usuário ${id}:, error`);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao remover monitoria.' });
     }
-
-    monitorias = monitorias.filter(m => m.id !== id);
-
-    return res.status(200).json({ mensagem: "Monitoria removida com sucesso!" });
 });
 
 app.use((req, res) => {
