@@ -99,22 +99,28 @@ app.post('/api/usuarios', validarUsuario, (req, res) => {
     return res.status(201).json(novoUsuario);
 });
 
-// 4. PUT /api/usuarios/:id - Atualiza um usuário existente
-app.put('/api/usuarios/:id', validarUsuario, (req, res) => {
-    const id = Number(req.params.id);
-    const usuario = usuarios.find(u => u.id === id);
-
-    if(!usuario) {
-        return res.status(404).json({ mensagem: "Usuário não encontrado!" });
-    }
-
+// 4. PUT /api/usuarios/:id - Atualiza um usuário existente no banco de dados
+app.put('/api/usuarios/:id', validarUsuario, async (req, res) => {
+    const { id } = req.params;
     const { nome, email } = req.body;
 
-    usuario.nome = nome;
-    usuario.email = email;
+    try {
+        const resultado = await db.query(
+            'UPDATE usuarios SET nome = $1, email = $2 WHERE id = $3 RETURNING *',
+            [nome, email, id]
+        );
 
-    return res.status(200).json(usuario);
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ mensagem: 'Usuário não encontrado!' });
+        }
+
+        return res.status(200).json(resultado.rows[0]);
+    } catch (error) {
+        console.error(`Erro ao atualizar usuário ${id}:, error`);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao atualizar usuário.' });
+    }
 });
+
 
 // 5. DELETE /api/usuarios/:id - Remove um usuário existente
 app.delete('/api/usuarios/:id', (req, res) => {
