@@ -122,18 +122,22 @@ app.put('/api/usuarios/:id', validarUsuario, async (req, res) => {
 });
 
 
-// 5. DELETE /api/usuarios/:id - Remove um usuário existente
-app.delete('/api/usuarios/:id', (req, res) => {
-    const id = Number(req.params.id);
-    const usuario = usuarios.find(u => u.id === id);
+// 5. DELETE /api/usuarios/:id - Remove um usuário do banco de dados
+app.delete('/api/usuarios/:id', async (req, res) => {
+    const { id } = req.params;
 
-    if(!usuario) {
-        return res.status(404).json({ mensagem: "Usuário não encontrado!" });
+    try {
+        const resultado = await db.query('DELETE FROM usuarios WHERE id = $1 RETURNING *', [id]);
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ mensagem: 'Usuário não encontrado!' });
+        }
+
+        return res.status(200).json({ mensagem: 'Usuário removido com sucesso!' });
+    } catch (error) {
+        console.error(`Erro ao atualizar usuário ${id}:, error`);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao remover usuário.' });
     }
-
-    usuarios = usuarios.filter(u => u.id !== id);
-
-    return res.status(200).json({ mensagem: "Usuário removido com sucesso!" });
 });
 
 // 6. GET /api/monitorias - busca e retorna todos as monitorias no banco de dados
