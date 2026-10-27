@@ -2,8 +2,8 @@
 
 > **Faculdade Municipal de Palhoça (FMP)**  
 > **Curso:** Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)  
-> **Disciplina:** Projeto Integrador III / Avaliação Full Stack & Back-End (Aula 10)  
-> **Professores Orientadores:** Daniela Amorim / Rafael Novo da Rosa  
+> **Disciplina:** Avaliação Full Stack & Back-End
+> **Professores Orientadores:** Rafael Novo da Rosa  
 > **Alinhamento:** ONU ODS 4 — *Educação de Qualidade*
 
 ---
