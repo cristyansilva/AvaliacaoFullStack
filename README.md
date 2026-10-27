@@ -132,17 +132,6 @@ AvaliacaoFullStack/
 
 ---
 
-## 🌿 Estrutura de Branches do Projeto
-
-O desenvolvimento foi organizado em branches separadas com commits fracionados:
-
-- `main` — Branch principal com a versão estável e documentação completa;
-- `develop` — Branch de integração contínua e desenvolvimento ativo;
-- `aula-04` — Branch com a implementação completa de componentes React, useState e React Router;
-- `aula-05` — Branch com consumo de API externa (Axios), testes automatizados e aplicação Next.js + Tailwind CSS.
-
----
-
 ## 🚀 Como Executar o Projeto Localmente
 
 ### 📋 Pré-requisitos
