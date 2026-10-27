@@ -30,15 +30,24 @@ function validarUsuario(req, res, next) {
 
 // MIDDLEWARE 3: validação de dados de monitoria (usado no POST e PUT)
 function validarMonitoria(req, res, next) {
-    const { disciplina, monitor, data } = req.body;
-    if (!disciplina) {
-        return res.status(400).json({ mensagem: 'A disciplina é obrigatória' });
+    const { disciplina_id, monitor_id, data_horario, local_link, tipo_atendimento, vagas_max } = req.body;
+    if (!disciplina_id) {
+        return res.status(400).json({ mensagem: 'O campo disciplina_id é obrigatório' });
     }
-    if (!monitor) {
-        return res.status(400).json({ mensagem: 'O monitor é obrigatório' });
+    if (!monitor_id) {
+        return res.status(400).json({ mensagem: 'O campo monitor_id é obrigatório' });
     }
-    if (!data) {
-        return res.status(400).json({ mensagem: 'A data é obrigatória' });
+    if (!data_horario) {
+        return res.status(400).json({ mensagem: 'O campo data_horario é obrigatório' });
+    }
+    if (!local_link) {
+        return res.status(400).json({ mensagem: 'O campo local_link é obrigatório' });
+    }
+    if (!tipo_atendimento || !['individual', 'coletiva'].includes(tipo_atendimento)) {
+        return res.status(400).json({ mensagem: "O campo tipo_atendimento é obrigatório ('individual' ou 'coletiva')" });
+    }
+    if (vagas_max === undefined || vagas_max === null || vagas_max === '') {
+        return res.status(400).json({ mensagem: 'O campo vagas_max é obrigatório' });
     }
     next();
 }
@@ -187,12 +196,27 @@ app.post('/api/monitorias', validarMonitoria, (req, res) => {
 // 9. PUT /api/monitorias/:id - Atualiza uma monitoria existente no banco de dados
 app.put('/api/monitorias/:id', validarMonitoria, async (req, res) => {
     const { id } = req.params;
-    const { disciplina, monitor, data } = req.body;
+    const {
+        disciplina_id,
+        monitor_id,
+        data_horario,
+        local_link,
+        tipo_atendimento,
+        vagas_max
+    } = req.body;
 
     try {
         const resultado = await db.query(
-            'UPDATE monitorias SET disciplina = $1, monitor = $2, data = $3 WHERE id = $4 RETURNING *',
-            [disciplina, monitor, data, id]
+            `UPDATE monitorias
+             SET disciplina_id = $1,
+                 monitor_id = $2,
+                 data_horario = $3,
+                 local_link = $4,
+                 tipo_atendimento = $5,
+                 vagas_max = $6
+             WHERE id = $7
+             RETURNING *`,
+            [disciplina_id, monitor_id, data_horario, local_link, tipo_atendimento, vagas_max, id]
         );
 
         if (resultado.rows.length === 0) {
@@ -201,7 +225,7 @@ app.put('/api/monitorias/:id', validarMonitoria, async (req, res) => {
 
         return res.status(200).json(resultado.rows[0]);
     } catch (error) {
-        console.error(`Erro ao atualizar usuário ${id}:, error`);
+        console.error(`Erro ao atualizar monitoria ${id}:`, error);
         return res.status(500).json({ mensagem: 'Erro interno do servidor ao atualizar monitoria.' });
     }
 });
