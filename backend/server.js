@@ -52,17 +52,7 @@ function validarMonitoria(req, res, next) {
     next();
 }
 
-let usuarios = [
-    { id: 1, nome: "Marlon da Silva", email: "marlon@email.com" },
-    { id: 2, nome: "Taíse da Rosa", email: "taise@email.com" },
-    { id: 3, nome: "Cristyan Silva", email: "cristyan@email.com" },
-    { id: 4, nome: "Lauren Leão", email: "lauren@email.com" },
-];
 
-let monitorias = [
-    { id: 1, disciplina: "Estrutura de Dados", monitor: "Cristyan da Silva", data: "2026-10-15" },
-    { id: 2, disciplina: "Programação Web", monitor: "Taíse da Rosa", data: "2026-10-18" },
-];
 
 // 1. GET /api/usuarios - busca e retorna todos os usuários no banco de dados
 app.get('/api/usuarios', async (req, res) => {
@@ -93,19 +83,21 @@ app.get('/api/usuarios/:id', async (req, res) => {
     }
 });
 
-// 3. POST /api/usuarios - Cria um novo usuário
-app.post('/api/usuarios', validarUsuario, (req, res) => {
-    const { nome, email } = req.body;
+// 3. POST /api/usuarios - Cria um novo usuário no banco de dados
+app.post('/api/usuarios', validarUsuario, async (req, res) => {
+    const { nome, email, tipo } = req.body;
 
-    const novoUsuario = {
-        id: usuarios.length > 0 ? usuarios[usuarios.length - 1].id + 1 : 1,
-        nome,
-        email
-    };
+    try {
+        const resultado = await db.query(
+            'INSERT INTO usuarios (nome, email, tipo) VALUES ($1, $2, $3) RETURNING *',
+            [nome, email, tipo || 'aluno']
+        );
 
-    usuarios.push(novoUsuario);
-
-    return res.status(201).json(novoUsuario);
+        return res.status(201).json(resultado.rows[0]);
+    } catch (error) {
+        console.error('Erro ao criar usuário:', error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao criar usuário.' });
+    }
 });
 
 // 4. PUT /api/usuarios/:id - Atualiza um usuário existente no banco de dados
@@ -125,7 +117,7 @@ app.put('/api/usuarios/:id', validarUsuario, async (req, res) => {
 
         return res.status(200).json(resultado.rows[0]);
     } catch (error) {
-        console.error(`Erro ao atualizar usuário ${id}:, error`);
+        console.error(`Erro ao atualizar usuário ${id}:`, error);
         return res.status(500).json({ mensagem: 'Erro interno do servidor ao atualizar usuário.' });
     }
 });
@@ -144,7 +136,7 @@ app.delete('/api/usuarios/:id', async (req, res) => {
 
         return res.status(200).json({ mensagem: 'Usuário removido com sucesso!' });
     } catch (error) {
-        console.error(`Erro ao atualizar usuário ${id}:, error`);
+        console.error(`Erro ao remover usuário ${id}:`, error);
         return res.status(500).json({ mensagem: 'Erro interno do servidor ao remover usuário.' });
     }
 });
@@ -177,20 +169,23 @@ app.get('/api/monitorias/:id', async (req, res) => {
     }
 });
 
-// 8. POST /api/monitorias - Cria uma nova monitoria (Status Code: 201 ou 400)
-app.post('/api/monitorias', validarMonitoria, (req, res) => {
-    const { disciplina, monitor, data } = req.body;
+// 8. POST /api/monitorias - Cria uma nova monitoria no banco de dados (Status Code: 201 ou 400)
+app.post('/api/monitorias', validarMonitoria, async (req, res) => {
+    const { disciplina_id, monitor_id, data_horario, local_link, tipo_atendimento, vagas_max } = req.body;
 
-    const novaMonitoria = {
-        id: monitorias.length > 0 ? monitorias[monitorias.length - 1].id + 1 : 1,
-        disciplina,
-        monitor,
-        data
-    };
+    try {
+        const resultado = await db.query(
+            `INSERT INTO monitorias (disciplina_id, monitor_id, data_horario, local_link, tipo_atendimento, vagas_max)
+             VALUES ($1, $2, $3, $4, $5, $6)
+             RETURNING *`,
+            [disciplina_id, monitor_id, data_horario, local_link, tipo_atendimento, vagas_max]
+        );
 
-    monitorias.push(novaMonitoria);
-
-    return res.status(201).json(novaMonitoria);
+        return res.status(201).json(resultado.rows[0]);
+    } catch (error) {
+        console.error('Erro ao criar monitoria:', error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao criar monitoria.' });
+    }
 });
 
 // 9. PUT /api/monitorias/:id - Atualiza uma monitoria existente no banco de dados
@@ -244,7 +239,7 @@ app.delete('/api/monitorias/:id', async (req, res) => {
 
         return res.status(200).json({ mensagem: 'Monitoria removida com sucesso!' });
     } catch (error) {
-        console.error(`Erro ao atualizar usuário ${id}:, error`);
+        console.error(`Erro ao remover monitoria ${id}:`, error);
         return res.status(500).json({ mensagem: 'Erro interno do servidor ao remover monitoria.' });
     }
 });
