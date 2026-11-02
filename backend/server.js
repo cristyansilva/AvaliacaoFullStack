@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const db = require('./db');
+const bcrypt = require('bcrypt');
 const { validarUsuario, validarMonitoria, validarId } = require('./validacao');
 
 require('dotenv').config();
@@ -30,11 +31,40 @@ function mensagemReferenciaInexistente(error) {
     return `O campo ${campo} aponta para um registro que não existe`;
 }
 
+// Rota de Registro de Usuário com Senha Criptografada
+app.post('/api/registro', async (req, res) => {
+    const { nome, email, tipo, senha } = req.body;
+
+    if (!nome || !email || !senha) {
+        return res.status(400).json({ mensagem: 'Nome, email e senha são obrigatórios!' });
+    }
+
+    try {
+        // 1. Gera o hash da senha (salt rounds = 10)
+        const saltRounds = 10;
+        const senha_hash = await bcrypt.hash(senha, saltRounds);
+
+        // 2. Salva no banco de dados APENAS o hash
+        const resultado = await db.query(
+            'INSERT INTO usuarios (nome, email, tipo, senha_hash) VALUES ($1, $2, $3, $4) RETURNING id, nome, email, tipo',
+            [nome, email, tipo || 'aluno', senha_hash]
+        );
+
+        // 3. Retorna os dados do usuário sem expor a senha/hash
+        return res.status(201).json({
+            mensagem: 'Usuário cadastrado com sucesso!',
+            usuario: resultado.rows[0]
+        });
+    } catch (error) {
+        console.error('Erro ao registrar usuário:', error);
+        return res.status(500).json({ mensagem: 'erro interno ao cadastrar usuário' });
+    }
+});
 
 // 1. GET /api/usuarios - busca e retorna todos os usuários no banco de dados
 app.get('/api/usuarios', async (req, res) => {
     try {
-        const resultado = await db.query('SELECT * FROM usuarios');
+        const resultado = await db.query('SELECT id, nome, email, tipo FROM usuarios');
         return res.status(200).json(resultado.rows);
     } catch (error) {
         console.error(`Erro ao buscar usuários: `, error);
@@ -47,7 +77,7 @@ app.get('/api/usuarios/:id', validarId, async (req, res) => {
     const { id } = req.params;
 
     try {
-        const resultado = await db.query('SELECT * FROM usuarios WHERE id = $1', [id]);
+        const resultado = await db.query('SELECT id, nome, email, tipo FROM usuarios WHERE id = $1', [id]);
     
         if(resultado.rows.length === 0) {
             return res.status(404).json({ mensagem: 'Usuário não encontrado.' });
