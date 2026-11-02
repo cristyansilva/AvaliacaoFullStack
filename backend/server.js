@@ -1,5 +1,7 @@
 const express = require('express');
+const path = require('path');
 const db = require('./db');
+const { validarUsuario, validarMonitoria, validarId } = require('./validacao');
 
 require('dotenv').config();
 
@@ -16,42 +18,17 @@ function registrarLog(req, res, next) {
 }
 app.use(registrarLog);
 
-// MIDDLEWARE 2: validação de dados de usuário (usado no POST e PUT)
-function validarUsuario(req, res, next) {
-    const { nome, email } = req.body;
-    if (!nome) {
-        return res.status(400).json({ mensagem: 'O nome é obrigatório' });
-    }
-    if (!email) {
-        return res.status(400).json({ mensagem: 'O e-mail é obrigatório' });
-    }
-    next();
-}
+// Os middlewares de validação com Joi (usados no POST e PUT) ficam em validacao.js
 
-// MIDDLEWARE 3: validação de dados de monitoria (usado no POST e PUT)
-function validarMonitoria(req, res, next) {
-    const { disciplina_id, monitor_id, data_horario, local_link, tipo_atendimento, vagas_max } = req.body;
-    if (!disciplina_id) {
-        return res.status(400).json({ mensagem: 'O campo disciplina_id é obrigatório' });
-    }
-    if (!monitor_id) {
-        return res.status(400).json({ mensagem: 'O campo monitor_id é obrigatório' });
-    }
-    if (!data_horario) {
-        return res.status(400).json({ mensagem: 'O campo data_horario é obrigatório' });
-    }
-    if (!local_link) {
-        return res.status(400).json({ mensagem: 'O campo local_link é obrigatório' });
-    }
-    if (!tipo_atendimento || !['individual', 'coletiva'].includes(tipo_atendimento)) {
-        return res.status(400).json({ mensagem: "O campo tipo_atendimento é obrigatório ('individual' ou 'coletiva')" });
-    }
-    if (vagas_max === undefined || vagas_max === null || vagas_max === '') {
-        return res.status(400).json({ mensagem: 'O campo vagas_max é obrigatório' });
-    }
-    next();
-}
+// Códigos de erro do PostgreSQL: o dado tem o formato certo, mas o banco recusa
+const VALOR_DUPLICADO = '23505';
+const REFERENCIA_INEXISTENTE = '23503';
 
+// Monta a mensagem de uma monitoria que aponta para disciplina ou monitor que não existe
+function mensagemReferenciaInexistente(error) {
+    const campo = error.constraint.includes('disciplina') ? 'disciplina_id' : 'monitor_id';
+    return `O campo ${campo} aponta para um registro que não existe`;
+}
 
 
 // 1. GET /api/usuarios - busca e retorna todos os usuários no banco de dados
@@ -66,7 +43,7 @@ app.get('/api/usuarios', async (req, res) => {
 });
 
 // 2. GET /api/usuarios/:id - Retorna um usuário específico por ID no banco
-app.get('/api/usuarios/:id', async (req, res) => {
+app.get('/api/usuarios/:id', validarId, async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -90,18 +67,21 @@ app.post('/api/usuarios', validarUsuario, async (req, res) => {
     try {
         const resultado = await db.query(
             'INSERT INTO usuarios (nome, email, tipo) VALUES ($1, $2, $3) RETURNING *',
-            [nome, email, tipo || 'aluno']
+            [nome, email, tipo]
         );
 
         return res.status(201).json(resultado.rows[0]);
     } catch (error) {
+        if (error.code === VALOR_DUPLICADO) {
+            return res.status(409).json({ mensagem: 'Já existe um usuário com este e-mail.' });
+        }
         console.error('Erro ao criar usuário:', error);
         return res.status(500).json({ mensagem: 'Erro interno do servidor ao criar usuário.' });
     }
 });
 
 // 4. PUT /api/usuarios/:id - Atualiza um usuário existente no banco de dados
-app.put('/api/usuarios/:id', validarUsuario, async (req, res) => {
+app.put('/api/usuarios/:id', validarId, validarUsuario, async (req, res) => {
     const { id } = req.params;
     const { nome, email } = req.body;
 
@@ -117,6 +97,9 @@ app.put('/api/usuarios/:id', validarUsuario, async (req, res) => {
 
         return res.status(200).json(resultado.rows[0]);
     } catch (error) {
+        if (error.code === VALOR_DUPLICADO) {
+            return res.status(409).json({ mensagem: 'Já existe um usuário com este e-mail.' });
+        }
         console.error(`Erro ao atualizar usuário ${id}:`, error);
         return res.status(500).json({ mensagem: 'Erro interno do servidor ao atualizar usuário.' });
     }
@@ -124,7 +107,7 @@ app.put('/api/usuarios/:id', validarUsuario, async (req, res) => {
 
 
 // 5. DELETE /api/usuarios/:id - Remove um usuário do banco de dados
-app.delete('/api/usuarios/:id', async (req, res) => {
+app.delete('/api/usuarios/:id', validarId, async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -153,7 +136,7 @@ app.get('/api/monitorias', async (req, res) => {
 });
 
 // 7. GET /api/monitorias/:id - Retorna uma monitoria específica pelo ID (Status Code: 200 ou 404)
-app.get('/api/monitorias/:id', async (req, res) => {
+app.get('/api/monitorias/:id', validarId, async (req, res) => {
     const { id } = req.params;
     try {
         const resultado = await db.query('SELECT * FROM monitorias WHERE id = $1', [id]);
@@ -183,13 +166,16 @@ app.post('/api/monitorias', validarMonitoria, async (req, res) => {
 
         return res.status(201).json(resultado.rows[0]);
     } catch (error) {
+        if (error.code === REFERENCIA_INEXISTENTE) {
+            return res.status(400).json({ mensagem: mensagemReferenciaInexistente(error) });
+        }
         console.error('Erro ao criar monitoria:', error);
         return res.status(500).json({ mensagem: 'Erro interno do servidor ao criar monitoria.' });
     }
 });
 
 // 9. PUT /api/monitorias/:id - Atualiza uma monitoria existente no banco de dados
-app.put('/api/monitorias/:id', validarMonitoria, async (req, res) => {
+app.put('/api/monitorias/:id', validarId, validarMonitoria, async (req, res) => {
     const { id } = req.params;
     const {
         disciplina_id,
@@ -220,6 +206,9 @@ app.put('/api/monitorias/:id', validarMonitoria, async (req, res) => {
 
         return res.status(200).json(resultado.rows[0]);
     } catch (error) {
+        if (error.code === REFERENCIA_INEXISTENTE) {
+            return res.status(400).json({ mensagem: mensagemReferenciaInexistente(error) });
+        }
         console.error(`Erro ao atualizar monitoria ${id}:`, error);
         return res.status(500).json({ mensagem: 'Erro interno do servidor ao atualizar monitoria.' });
     }
@@ -227,7 +216,7 @@ app.put('/api/monitorias/:id', validarMonitoria, async (req, res) => {
 
 
 // 10. DELETE /api/monitorias/:id - Remove uma monitoria do banco de dados
-app.delete('/api/monitorias/:id', async (req, res) => {
+app.delete('/api/monitorias/:id', validarId, async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -244,8 +233,24 @@ app.delete('/api/monitorias/:id', async (req, res) => {
     }
 });
 
+// Página usada na gravação do vídeo (http://localhost:3001/demo). Lê o código real destes arquivos.
+if (process.env.NODE_ENV !== 'production') {
+    app.get('/demo', (req, res) => res.sendFile(path.join(__dirname, 'demo.html')));
+    for (const arquivo of ['validacao.js', 'server.js', 'package.json']) {
+        app.get(`/demo/${arquivo}`, (req, res) => res.type('text/plain').sendFile(path.join(__dirname, arquivo)));
+    }
+}
+
 app.use((req, res) => {
     return res.status(404).json({ mensagem: "Rota não encontrada!" });
+});
+
+// JSON malformado no body: o express.json() falha antes de chegar na validação do Joi
+app.use((err, req, res, next) => {
+    if (err.type === 'entity.parse.failed') {
+        return res.status(400).json({ mensagem: 'O corpo da requisição não é um JSON válido' });
+    }
+    next(err);
 });
 
 
