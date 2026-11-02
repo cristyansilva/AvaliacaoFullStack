@@ -2,8 +2,8 @@
 
 > **Faculdade Municipal de Palhoça (FMP)**  
 > **Curso:** Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)  
-> **Disciplina:** Projeto Integrador III / Avaliação Full Stack & Back-End (Aula 10)  
-> **Professores Orientadores:** Daniela Amorim / Rafael Novo da Rosa  
+> **Disciplina:** Avaliação Full Stack & Back-End
+> **Professores Orientadores:** Rafael Novo da Rosa  
 > **Alinhamento:** ONU ODS 4 — *Educação de Qualidade*
 
 ---
@@ -129,17 +129,6 @@ AvaliacaoFullStack/
 ├── vercel.json           # ⚙️ Configuração de rewrite para SPA na Vercel
 └── README.md             # 📝 Documentação principal do projeto
 ```
-
----
-
-## 🌿 Estrutura de Branches do Projeto
-
-O desenvolvimento foi organizado em branches separadas com commits fracionados:
-
-- `main` — Branch principal com a versão estável e documentação completa;
-- `develop` — Branch de integração contínua e desenvolvimento ativo;
-- `aula-04` — Branch com a implementação completa de componentes React, useState e React Router;
-- `aula-05` — Branch com consumo de API externa (Axios), testes automatizados e aplicação Next.js + Tailwind CSS.
 
 ---
 
