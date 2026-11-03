@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const db = require('./db');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { validarUsuario, validarMonitoria, validarId } = require('./validacao');
 
 require('dotenv').config();
@@ -58,6 +59,61 @@ app.post('/api/registro', async (req, res) => {
     } catch (error) {
         console.error('Erro ao registrar usuário:', error);
         return res.status(500).json({ mensagem: 'erro interno ao cadastrar usuário' });
+    }
+});
+
+// Rota de Login de Usuário (Autenticação com JWT)
+app.post('/api/login', async (req, res) => {
+    const { email, senha } = req.body;
+
+    // 1. Valida se os campos obrigatórios foram enviados
+    if (!email || !senha) {
+        return res.status(400).json({ mensagem: 'E-mail e senha são obrigatórios!' });
+    }
+
+    try {
+        // 2. Busca o usuário no banco de dados pelo e-mail
+        const resultado = await db.query(
+            'SELECT id, nome, email, tipo, senha_hash FROM usuarios WHERE email = $1',
+            [email]
+        );
+
+        // Se o e-mail não existir no banco
+        if (resultado.rows.length === 0) {
+            return res.status(401).json({ mensagem: 'Credenciais inválidas.' });
+        }
+
+        const usuario = resultado.rows[0];
+
+        // 3. Compara a senha digitada com o hash armazenado usando bcrypt.compare
+        const senhaValida = await bcrypt.compare(senha, usuario.senha_hash);
+
+        // Se a senha estiver incorreta
+        if (!senhaValida) {
+            return res.status(401).json({ mensagem: 'Credenciais inválidas.' });
+        }
+
+        // 4. Gera o token JWT com expiração
+        const token = jwt.sign(
+            { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' } // Expira em 1 hora
+        );
+
+        // 5. Retorna status 200 com o token e os dados públicos do usuário
+        return res.status(200).json({
+            mensagem: 'Login realizado com sucesso!',
+            token,
+            usuario: {
+                id: usuario.id,
+                nome: usuario.nome,
+                email: usuario.email,
+                tipo: usuario.tipo
+            }
+        });
+    } catch (error) {
+        console.error('Erro ao realizar login:', error);
+        return res.status(500).json({ mensagem: 'Erro interno ao realizar login.' });
     }
 });
 
