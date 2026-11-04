@@ -96,7 +96,7 @@ app.post('/api/login', async (req, res) => {
         // 4. Gera o token JWT com expiração
         const token = jwt.sign(
             { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET || 'segredo_suporte',
             { expiresIn: '1h' } // Expira em 1 hora
         );
 
@@ -116,6 +116,38 @@ app.post('/api/login', async (req, res) => {
         return res.status(500).json({ mensagem: 'Erro interno ao realizar login.' });
     }
 });
+
+// =========================================================================
+// PARTE 4: MIDDLEWARE E ROTA PROTEGIDA COM JWT (LAUREN)
+// =========================================================================
+function autenticarToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Espera formato "Bearer TOKEN"
+
+    // 1. Sem token -> 401 Unauthorized
+    if (!token) {
+        return res.status(401).json({ mensagem: 'Acesso negado. Token não fornecido.' });
+    }
+
+    try {
+        // 2. Valida o token recebido
+        const decodificado = jwt.verify(token, process.env.JWT_SECRET || 'segredo_suporte');
+        req.usuario = decodificado;
+        next(); // Autorizado, passa para a rota
+    } catch (erro) {
+        // Token inválido ou expirado -> 401 Unauthorized
+        return res.status(401).json({ mensagem: 'Token inválido ou expirado.' });
+    }
+}
+
+// Rota protegida utilizada na demonstração do Postman
+app.get('/api/perfil', autenticarToken, (req, res) => {
+    res.status(200).json({
+        mensagem: 'Acesso autorizado à rota protegida!',
+        usuario: req.usuario
+    });
+});
+// =========================================================================
 
 // 1. GET /api/usuarios - busca e retorna todos os usuários no banco de dados
 app.get('/api/usuarios', async (req, res) => {
@@ -190,7 +222,6 @@ app.put('/api/usuarios/:id', validarId, validarUsuario, async (req, res) => {
         return res.status(500).json({ mensagem: 'Erro interno do servidor ao atualizar usuário.' });
     }
 });
-
 
 // 5. DELETE /api/usuarios/:id - Remove um usuário do banco de dados
 app.delete('/api/usuarios/:id', validarId, async (req, res) => {
@@ -300,7 +331,6 @@ app.put('/api/monitorias/:id', validarId, validarMonitoria, async (req, res) => 
     }
 });
 
-
 // 10. DELETE /api/monitorias/:id - Remove uma monitoria do banco de dados
 app.delete('/api/monitorias/:id', validarId, async (req, res) => {
     const { id } = req.params;
@@ -338,7 +368,6 @@ app.use((err, req, res, next) => {
     }
     next(err);
 });
-
 
 app.listen(PORT, () => {
     console.log(`O SERVIDOR está rodando na porta ${PORT}.`);
