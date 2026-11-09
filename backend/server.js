@@ -316,6 +316,88 @@ app.delete('/api/monitorias/:id', validarId, async (req, res) => {
     }
 });
 
+// 11. GET /api/disciplinas - Busca e retorna todas as disciplinas
+app.get('/api/disciplinas', async (req, res) => {
+    try {
+        const resultado = await db.query('SELECT * FROM disciplinas ORDER BY id ASC');
+        return res.status(200).json(resultado.rows);
+    } catch (error) {
+        console.error('Erro ao buscar disciplinas:', error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao buscar disciplinas.' });
+    }
+});
+
+// 12. GET /api/disciplinas/:id - Retorna uma disciplina específica por ID
+app.get('/api/disciplinas/:id', validarId, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const resultado = await db.query('SELECT * FROM disciplinas WHERE id = $1', [id]);
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ mensagem: 'Disciplina não encontrada.' });
+        }
+
+        return res.status(200).json(resultado.rows[0]);
+    } catch (error) {
+        console.error(`Erro ao buscar disciplina ${id}:`, error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao buscar a disciplina.' });
+    }
+});
+
+// 13. POST /api/disciplinas - Cria uma nova disciplina
+app.post('/api/disciplinas', async (req, res) => {
+    const { codigo, nome, semestre } = req.body;
+
+    if (!codigo || !nome || !semestre) {
+        return res.status(400).json({ mensagem: 'Código, nome e semestre são obrigatórios!' });
+    }
+
+    try {
+        const resultado = await db.query(
+            'INSERT INTO disciplinas (codigo, nome, semestre) VALUES ($1, $2, $3) RETURNING *',
+            [codigo, nome, semestre]
+        );
+
+        return res.status(201).json(resultado.rows[0]);
+    } catch (error) {
+        if (error.code === VALOR_DUPLICADO) {
+            return res.status(409).json({ mensagem: 'Já existe uma disciplina cadastrada com este código.' });
+        }
+        console.error('Erro ao criar disciplina:', error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao criar disciplina.' });
+    }
+});
+
+// 14. PUT /api/disciplinas/:id - Atualiza uma disciplina existente
+app.put('/api/disciplinas/:id', validarId, async (req, res) => {
+    const { id } = req.params;
+    const { codigo, nome, semestre } = req.body;
+
+    if (!codigo || !nome || !semestre) {
+        return res.status(400).json({ mensagem: 'Código, nome e semestre são obrigatórios!' });
+    }
+
+    try {
+        const resultado = await db.query(
+            'UPDATE disciplinas SET codigo = $1, nome = $2, semestre = $3 WHERE id = $4 RETURNING *',
+            [codigo, nome, semestre, id]
+        );
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ mensagem: 'Disciplina não encontrada!' });
+        }
+
+        return res.status(200).json(resultado.rows[0]);
+    } catch (error) {
+        if (error.code === VALOR_DUPLICADO) {
+            return res.status(409).json({ mensagem: 'Já existe uma disciplina cadastrada com este código.' });
+        }
+        console.error(`Erro ao atualizar disciplina ${id}:`, error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor ao atualizar disciplina.' });
+    }
+});
+
 // Página usada na gravação do vídeo (http://localhost:3001/demo). Lê o código real destes arquivos.
 if (process.env.NODE_ENV !== 'production') {
     app.get('/demo', (req, res) => res.sendFile(path.join(__dirname, 'demo.html')));
