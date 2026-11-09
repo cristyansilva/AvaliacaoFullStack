@@ -3,6 +3,8 @@ const path = require('path');
 const db = require('./db');
 const bcrypt = require('bcrypt');
 const { validarUsuario, validarMonitoria, validarId } = require('./validacao');
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
 require('dotenv').config();
 
@@ -10,6 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // MIDDLEWARE GLOBAL: lê JSON do body (sem isso, req.body = undefined)
+app.use(cors());
 app.use(express.json());
 
 // MIDDLEWARE 1: o "porteiro" que registra tudo (logs)
@@ -56,8 +59,58 @@ app.post('/api/registro', async (req, res) => {
             usuario: resultado.rows[0]
         });
     } catch (error) {
+        if (error.code === VALOR_DUPLICADO) {
+            return res.status(409).json({ mensagem: 'Já existe um usuário com este e-mail.' });
+        }
         console.error('Erro ao registrar usuário:', error);
         return res.status(500).json({ mensagem: 'erro interno ao cadastrar usuário' });
+    }
+});
+
+// Rota de Login de Usuário (Autenticação com JWT)
+app.post('/api/login', async (req, res) => {
+    const { email, senha } = req.body;
+
+    if (!email || !senha) {
+        return res.status(400).json({ mensagem: 'E-mail e senha são obrigatórios!' });
+    }
+
+    try {
+        const resultado = await db.query(
+            'SELECT id, nome, email, tipo, senha_hash FROM usuarios WHERE email = $1',
+            [email]
+        );
+
+        if (resultado.rows.length === 0) {
+            return res.status(401).json({ mensagem: 'Credenciais inválidas.' });
+        }
+
+        const usuario = resultado.rows[0];
+        const senhaValida = await bcrypt.compare(senha, usuario.senha_hash);
+
+        if (!senhaValida) {
+            return res.status(401).json({ mensagem: 'Credenciais inválidas.' });
+        }
+
+        const token = jwt.sign(
+            { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        return res.status(200).json({
+            mensagem: 'Login realizado com sucesso!',
+            token,
+            usuario: {
+                id: usuario.id,
+                nome: usuario.nome,
+                email: usuario.email,
+                tipo: usuario.tipo
+            }
+        });
+    } catch (error) {
+        console.error('Erro ao realizar login:', error);
+        return res.status(500).json({ mensagem: 'Erro interno ao realizar login.' });
     }
 });
 
