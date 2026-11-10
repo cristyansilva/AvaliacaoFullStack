@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Icon from '../Icon/Icon';
+import { useAuth } from '../../auth/AuthContext';
 
 /**
  * Componente Reutilizável de Navegação Superior (Navbar)
@@ -10,12 +11,16 @@ import Icon from '../Icon/Icon';
 export default function Navbar() {
   const [menuAberto, setMenuAberto] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { usuario, logout } = useAuth();
 
   const rotas = [
     { caminho: '/', rotulo: 'Monitorias' },
     { caminho: '/solicitar', rotulo: 'Solicitar atendimento' },
     { caminho: '/monitores', rotulo: 'Monitores' },
     { caminho: '/comunidade', rotulo: 'Comunidade' },
+    { caminho: '/monitorias-api', rotulo: 'API' },
+    { caminho: '/demonstracao', rotulo: 'Demonstração' },
     { caminho: '/sobre', rotulo: 'Sobre' }
   ];
 
@@ -66,6 +71,7 @@ export default function Navbar() {
             );
           })}
         </ul>
+        {usuario && <div className="navbar-custom__links"><span>Olá, {usuario.nome}</span><button type="button" className="btn-limpar" onClick={() => { logout(); navigate('/login', { replace: true }); }}>Sair</button></div>}
       </nav>
     </header>
   );

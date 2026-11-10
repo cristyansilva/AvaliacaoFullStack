@@ -7,6 +7,12 @@ import Monitores from './pages/Monitores';
 import Sobre from './pages/Sobre';
 import ComunidadeApi from './pages/ComunidadeApi';
 import { listaMonitoriasIniciaisMock } from './data/monitoriaData';
+import { AuthProvider } from './auth/AuthContext';
+import RequireAuth from './auth/RequireAuth';
+import Login from './pages/Login';
+import Cadastro from './pages/Cadastro';
+import MonitoriasApi from './pages/MonitoriasApi';
+import Demonstracao from './pages/Demonstracao';
 
 /**
  * REQUISITOS AULA 04 - REACT: COMPONENTES, HOOKS E ROTAS
@@ -42,6 +48,7 @@ export default function App() {
   };
 
   return (
+    <AuthProvider>
     <BrowserRouter>
       <div className="app-container">
         {/* Menu de navegação global com links do React Router */}
@@ -50,28 +57,20 @@ export default function App() {
         {/* Área principal com roteamento dinâmico */}
         <main className="app-content">
           <Routes>
-            <Route
-              path="/"
-              element={
-                <Home
-                  monitorias={monitorias}
-                  onAtualizarMonitorias={setMonitorias}
-                />
-              }
-            />
-            <Route
-              path="/solicitar"
-              element={
-                <SolicitarMonitoria
-                  solicitacoes={solicitacoes}
-                  onAdicionarSolicitacao={handleAdicionarSolicitacao}
-                />
-              }
-            />
-            <Route path="/monitores" element={<Monitores />} />
-            <Route path="/comunidade" element={<ComunidadeApi />} />
-            <Route path="/sobre" element={<Sobre />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/demonstracao" element={<Demonstracao />} />
+            <Route element={<RequireAuth />}>
+              <Route path="/" element={<Home monitorias={monitorias} onAtualizarMonitorias={setMonitorias} />} />
+              <Route path="/solicitar" element={<SolicitarMonitoria solicitacoes={solicitacoes} onAdicionarSolicitacao={handleAdicionarSolicitacao} />} />
+              <Route path="/monitores" element={<Monitores />} />
+              <Route path="/comunidade" element={<ComunidadeApi />} />
+              <Route path="/monitorias-api" element={<MonitoriasApi />} />
+            </Route>
+            <Route element={<RequireAuth />}>
+              <Route path="/sobre" element={<Sobre />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </main>
 
@@ -89,5 +88,6 @@ export default function App() {
         </footer>
       </div>
     </BrowserRouter>
+    </AuthProvider>
   );
 }

@@ -75,6 +75,27 @@ A aplicação permite aos acadêmicos encontrar horários, disciplinas atendidas
   - Configuração de roteamento SPA com `vercel.json`;
   - Preparado para publicação tanto do SPA React quanto da Landing Page Next.js.
 
+### 🔹 Integrante 4 — Front-end com API real, JWT e autenticação
+- [x] Cliente Axios compartilhado (`frontend/src/api.js`), configurado pela variável `VITE_API_URL` com a URL pública do backend no Render;
+- [x] Tela de login envia e-mail e senha a `POST /api/login`, guarda o JWT e os dados do usuário no Context API e no `localStorage`;
+- [x] `AuthProvider`/`useAuth` compartilham token e usuário; o cliente Axios envia o token no cabeçalho `Authorization`;
+- [x] Rotas protegidas redirecionam para `/login`; o retorno do login leva o usuário de volta à rota pretendida;
+- [x] Cadastro chama `POST /api/registro` e redireciona para o login ao concluir;
+- [x] Página `/monitorias-api` lista com `map()` os registros reais de `GET /api/monitorias`.
+
+#### Configurar a URL pública do Render
+1. No deploy do front-end (Vercel), crie a variável de ambiente `VITE_API_URL` com a URL base do serviço backend no Render, sem acrescentar `/api` ao final. Exemplo: `https://nome-do-servico.onrender.com`.
+2. Para desenvolvimento local, copie `frontend/.env.example` para `frontend/.env.local` e substitua o valor pela URL pública real do Render. A aplicação não usa localhost como fallback.
+3. Garanta que `JWT_SECRET` esteja configurada nas variáveis de ambiente do backend no Render e faça novo deploy do front-end após configurar `VITE_API_URL`.
+4. Se o banco no Render foi criado antes da autenticação, execute `db/migration-autenticacao.sql` nele para criar `usuarios.senha_hash`. Para a demonstração, cadastre uma conta com um e-mail ainda não usado; os usuários de seed antigos não têm senha cadastrada.
+
+#### Roteiro curto para o vídeo do Integrante 4
+1. Abra `/demonstracao`, clique em “Testar conexão com a API” e mostre o status HTTP.
+2. Abra `/monitorias-api` e mostre a lista recebida de `GET /api/monitorias`.
+3. Saia da conta e tente acessar `/`; mostre o redirecionamento para `/login`.
+4. Entre com um usuário cadastrado; mostre o retorno à página protegida e o nome do usuário na barra de navegação.
+5. Mostre brevemente `AuthContext.jsx` (createContext/Provider/useContext), `RequireAuth.jsx` (useNavigate/Outlet) e `frontend/src/api.js` (Axios com URL do Render).
+
 ### 🔹 AULA 10 — Modelagem e Banco de Dados Relacional (PostgreSQL)
 - [x] **Estruturação Física SQL (`db/script.sql`):** Script DDL e DML completo contendo a criação do banco de dados na raiz do repositório;
 - [x] **Relacionamentos Mapeados:**
