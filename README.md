@@ -84,6 +84,14 @@ A aplicação permite aos acadêmicos encontrar horários, disciplinas atendidas
 - [x] **Povoamento DML:** Pelo menos 4 registros `INSERT` por tabela para testes do ambiente acadêmico;
 - [x] **Consultas Avançadas DQL:** `SELECT` estruturado com múltiplos `JOIN`s relacionando alunos, disciplinas, monitores, horários e status da reserva.
 
+### 🔹 AULA 12 — Parte 01: Validação de Dados com Joi
+- [x] **Por que validar:** Dados errados causam erros inesperados (como `500` vindo do banco), abrem espaço para vulnerabilidades e corrompem o banco (como um e-mail `nao-e-email` salvo como válido). A validação é uma camada de defesa: contra **SQL injection** a proteção principal continua sendo as queries parametrizadas (`$1`, `$2`) e contra **XSS** o escape na exibição dos dados;
+- [x] **Biblioteca Joi (`backend/validacao.js`):** Substitui os `if`s manuais dos middlewares de validação;
+- [x] **Schemas como a "receita" dos dados:** `schemaUsuario` e `schemaMonitoria` usam `Joi.string()`, `.email()`, `Joi.number()`, `.min()`, `.max()`, `.required()` e `.default()` (o `tipo` do usuário assume `aluno` quando não é enviado), com limites que espelham o `db/script.sql`;
+- [x] **Middleware de validação:** `validar(schema)` responde `400 Bad Request` com uma mensagem clara em português quando o dado está errado e chama `next()` quando está tudo certo. É usado no `POST` e `PUT` de usuários e monitorias;
+- [x] **Erros do cliente não viram `500`:** ID não numérico na URL responde `400` (via Joi), disciplina ou monitor inexistente responde `400` e e-mail já cadastrado responde `409`. O `500` fica só para falhas reais do servidor;
+- [x] **Página de demonstração (`backend/demo.html`):** Com a API rodando, abra `http://localhost:3001/demo` para ver o schema real e testar as rotas ao vivo. A tecla `R` oculta o roteiro de narração durante a gravação. A página não é servida com `NODE_ENV=production`.
+
 ---
 
 ## 🗄️ Modelagem e Banco de Dados PostgreSQL (Aula 10)
@@ -103,10 +111,10 @@ O banco de dados relacional **PostgreSQL** é responsável pela persistência da
 | MÉTODO | ENDPOINT (URL) | DESCRIÇÃO / AÇÃO | MIDDLEWARE | STATUS CODES |
 | :---: | :--- | :--- | :---: | :---: |
 | **GET** | `/api/monitorias` | Lista todas as monitorias cadastradas | Log | `200 OK` |
-| **GET** | `/api/monitorias/:id` | Busca monitoria específica por ID | Log | `200 OK` / `404 Not Found` |
+| **GET** | `/api/monitorias/:id` | Busca monitoria específica por ID | Log + Validação do ID | `200 OK` / `400 Bad Request` / `404 Not Found` |
 | **POST** | `/api/monitorias` | Cadastra uma nova oferta de monitoria | Log + Validação | `201 Created` / `400 Bad Request` |
-| **PUT** | `/api/monitorias/:id` | Atualiza dados de uma monitoria | Log + Validação | `200 OK` / `400 Bad Request` / `404 Not Found` |
-| **DELETE** | `/api/monitorias/:id` | Remove uma monitoria cadastrada | Log | `200 OK` / `404 Not Found` |
+| **PUT** | `/api/monitorias/:id` | Atualiza dados de uma monitoria | Log + Validação do ID e do body | `200 OK` / `400 Bad Request` / `404 Not Found` |
+| **DELETE** | `/api/monitorias/:id` | Remove uma monitoria cadastrada | Log + Validação do ID | `200 OK` / `400 Bad Request` / `404 Not Found` |
 
 ---
 
@@ -120,6 +128,8 @@ AvaliacaoFullStack/
 │   ├── node_modules/     # Dependências (ignorado pelo Git)
 │   ├── .env              # Variáveis de ambiente (ignorado pelo Git)
 │   ├── package.json      # Dependências do servidor Express e scripts npm
+│   ├── validacao.js      # Schemas Joi e middleware de validação (Aula 12)
+│   ├── demo.html         # Página usada na gravação do vídeo, em /demo (Aula 12)
 │   └── server.js         # Servidor Express com Middlewares, Rotas e Regras
 ├── frontend/             # 💻 Aplicação Principal em React SPA (Vite)
 │   ├── src/              # Componentes, Páginas, Hooks e Testes Vitest
