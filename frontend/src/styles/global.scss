@@ -1529,6 +1529,26 @@ button {
   color: $text-muted;
 }
 
+.roteiro-demonstracao {
+  display: grid;
+  gap: 0.85rem;
+  padding-left: 1.5rem;
+  color: $secondary-color;
+
+  li {
+    padding-left: 0.25rem;
+    line-height: 1.6;
+  }
+
+  strong {
+    color: $text-color;
+  }
+}
+
+.roteiro-demonstracao + .texto-contagem {
+  margin-top: 1rem;
+}
+
 // -------------------------------------------------------------------------
 // PÁGINA DA COMUNIDADE (REQUISITO AULA 05 - CONSUMO DE API COM AXIOS)
 // -------------------------------------------------------------------------

@@ -1,0 +1,591 @@
+{
+  "info": {
+    "_postman_id": "f67f1e78-02e2-41b1-819c-5718ff4ea37c",
+    "name": "Desafio-Aula-13",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54580974",
+    "_collection_link": "https://go.postman.co/collection/54580974-f67f1e78-02e2-41b1-819c-5718ff4ea37c?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1. Login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"lauren@teste.com\",\r\n    \"senha\":\"123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "1. Login",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"lauren@teste.com\",\r\n    \"senha\":\"123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": ":status",
+              "value": "200"
+            },
+            {
+              "key": "date",
+              "value": "Mon, 16 Nov 2026 23:01:43 GMT"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "content-length",
+              "value": "273"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "content-encoding",
+              "value": "br"
+            },
+            {
+              "key": "etag",
+              "value": "W/\"14a-LlLdKMXw69O8IjFTvOoMVKp1Duc\""
+            },
+            {
+              "key": "rndr-id",
+              "value": "702105b4-1dc1-4170"
+            },
+            {
+              "key": "server",
+              "value": "cloudflare"
+            },
+            {
+              "key": "vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "x-powered-by",
+              "value": "Express"
+            },
+            {
+              "key": "x-render-origin-server",
+              "value": "Render"
+            },
+            {
+              "key": "cf-cache-status",
+              "value": "DYNAMIC"
+            },
+            {
+              "key": "cf-ray",
+              "value": "a5ba1e7ddfa2c50d-GRU"
+            },
+            {
+              "key": "alt-svc",
+              "value": "h3=\":443\"; ma=86400"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"mensagem\": \"Login realizado com sucesso!\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJsYXVyZW5AdGVzdGUuY29tIiwidGlwbyI6ImFsdW5vIiwiaWF0IjoxNzk0ODcwMTAzLCJleHAiOjE3OTQ4NzM3MDN9.5jUG1A1f8fhW8erDJv_-E8hJF9g6JYIFr5KMp1ru9UY\",\n  \"usuario\": {\n    \"id\": 6,\n    \"nome\": \"Lauren Teste\",\n    \"email\": \"lauren@teste.com\",\n    \"tipo\": \"aluno\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "2. Listar Monitorias",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/monitorias",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "monitorias"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "2. Listar Monitorias",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/monitorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "monitorias"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": ":status",
+              "value": "200"
+            },
+            {
+              "key": "date",
+              "value": "Mon, 16 Nov 2026 23:02:05 GMT"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "content-length",
+              "value": "241"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "content-encoding",
+              "value": "br"
+            },
+            {
+              "key": "etag",
+              "value": "W/\"2ab-NOAAD9TyIBPrgEV3Rb9XY56l9kY\""
+            },
+            {
+              "key": "rndr-id",
+              "value": "7a94d527-38d1-4268"
+            },
+            {
+              "key": "server",
+              "value": "cloudflare"
+            },
+            {
+              "key": "vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "x-powered-by",
+              "value": "Express"
+            },
+            {
+              "key": "x-render-origin-server",
+              "value": "Render"
+            },
+            {
+              "key": "cf-cache-status",
+              "value": "DYNAMIC"
+            },
+            {
+              "key": "cf-ray",
+              "value": "a5ba1f0b9c7ac50d-GRU"
+            },
+            {
+              "key": "alt-svc",
+              "value": "h3=\":443\"; ma=86400"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n  {\n    \"id\": 1,\n    \"disciplina_id\": 2,\n    \"monitor_id\": 1,\n    \"data_horario\": \"2026-10-22T19:00:00.000Z\",\n    \"local_link\": \"Lab 03 - Bloco B\",\n    \"tipo_atendimento\": \"individual\",\n    \"vagas_max\": 1\n  },\n  {\n    \"id\": 2,\n    \"disciplina_id\": 3,\n    \"monitor_id\": 2,\n    \"data_horario\": \"2026-10-24T18:00:00.000Z\",\n    \"local_link\": \"Meet: meet.google.com/abc-defg-hij\",\n    \"tipo_atendimento\": \"coletiva\",\n    \"vagas_max\": 15\n  },\n  {\n    \"id\": 3,\n    \"disciplina_id\": 1,\n    \"monitor_id\": 1,\n    \"data_horario\": \"2026-10-25T20:00:00.000Z\",\n    \"local_link\": \"Lab 01 - Bloco A\",\n    \"tipo_atendimento\": \"coletiva\",\n    \"vagas_max\": 10\n  },\n  {\n    \"id\": 4,\n    \"disciplina_id\": 4,\n    \"monitor_id\": 2,\n    \"data_horario\": \"2026-10-28T19:30:00.000Z\",\n    \"local_link\": \"Meet: meet.google.com/xyz-uvwx-rst\",\n    \"tipo_atendimento\": \"individual\",\n    \"vagas_max\": 1\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "3. Criar Monitorias",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"disciplina_id\": 1,\r\n    \"monitor_id\":1,\r\n    \"data_horario\": \"2026-11-20T14:00:00Z\",\r\n    \"local_link\": \"https://meet.google.com/abc\",\r\n    \"tipo_agendamento\": \"online\",\r\n    \"vagas_max\": 5\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/monitorias",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "monitorias"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "3. Criar Monitorias",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"disciplina_id\": 1,\r\n    \"monitor_id\":1,\r\n    \"data_horario\": \"2026-11-20T14:00:00Z\",\r\n    \"local_link\": \"https://meet.google.com/abc\",\r\n    \"tipo_atendimento\": \"coletiva\",\r\n    \"vagas_max\": 5\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/monitorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "monitorias"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": ":status",
+              "value": "201"
+            },
+            {
+              "key": "date",
+              "value": "Mon, 16 Nov 2026 23:06:07 GMT"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "content-length",
+              "value": "131"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "content-encoding",
+              "value": "br"
+            },
+            {
+              "key": "etag",
+              "value": "W/\"aa-z54OgXSBi/IQu6F9CHZzzLvLi9c\""
+            },
+            {
+              "key": "rndr-id",
+              "value": "163d99fe-b289-4141"
+            },
+            {
+              "key": "server",
+              "value": "cloudflare"
+            },
+            {
+              "key": "vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "x-powered-by",
+              "value": "Express"
+            },
+            {
+              "key": "x-render-origin-server",
+              "value": "Render"
+            },
+            {
+              "key": "cf-cache-status",
+              "value": "DYNAMIC"
+            },
+            {
+              "key": "cf-ray",
+              "value": "a5ba24ee5e2fd973-GRU"
+            },
+            {
+              "key": "alt-svc",
+              "value": "h3=\":443\"; ma=86400"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"id\": 6,\n  \"disciplina_id\": 1,\n  \"monitor_id\": 1,\n  \"data_horario\": \"2026-11-20T14:00:00.000Z\",\n  \"local_link\": \"https://meet.google.com/abc\",\n  \"tipo_atendimento\": \"coletiva\",\n  \"vagas_max\": 5\n}"
+        }
+      ]
+    },
+    {
+      "name": "4. Atualizar Monitoria",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"disciplina_id\": 1,\r\n    \"monitor_id\":1,\r\n    \"data_horario\": \"2026-11-20T14:00:00Z\",\r\n    \"local_link\": \"Sala 302\",\r\n    \"tipo_agendamento\": \"presencial\",\r\n    \"vagas_max\": 10   \r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/monitorias/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "monitorias",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "4. Atualizar Monitoria",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"disciplina_id\": 1,\r\n    \"monitor_id\":1,\r\n    \"data_horario\": \"2026-11-20T14:00:00Z\",\r\n    \"local_link\": \"Sala 302\",\r\n    \"tipo_atendimento\": \"coletiva\",\r\n    \"vagas_max\": 10   \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/monitorias/6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "monitorias",
+                "6"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": ":status",
+              "value": "200"
+            },
+            {
+              "key": "date",
+              "value": "Mon, 16 Nov 2026 23:06:59 GMT"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "content-length",
+              "value": "119"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "content-encoding",
+              "value": "br"
+            },
+            {
+              "key": "etag",
+              "value": "W/\"98-Zw3RgCC31Sfr/7ZP4S6BzylZg5c\""
+            },
+            {
+              "key": "rndr-id",
+              "value": "142a9542-d743-447a"
+            },
+            {
+              "key": "server",
+              "value": "cloudflare"
+            },
+            {
+              "key": "vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "x-powered-by",
+              "value": "Express"
+            },
+            {
+              "key": "x-render-origin-server",
+              "value": "Render"
+            },
+            {
+              "key": "cf-cache-status",
+              "value": "DYNAMIC"
+            },
+            {
+              "key": "cf-ray",
+              "value": "a5ba2638ffc7d973-GRU"
+            },
+            {
+              "key": "alt-svc",
+              "value": "h3=\":443\"; ma=86400"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"id\": 6,\n  \"disciplina_id\": 1,\n  \"monitor_id\": 1,\n  \"data_horario\": \"2026-11-20T14:00:00.000Z\",\n  \"local_link\": \"Sala 302\",\n  \"tipo_atendimento\": \"coletiva\",\n  \"vagas_max\": 10\n}"
+        }
+      ]
+    },
+    {
+      "name": "5. Eliminar Monitoria",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/monitorias/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "monitorias",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "5. Eliminar Monitoria",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/monitorias/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "monitorias",
+                "1"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": ":status",
+              "value": "200"
+            },
+            {
+              "key": "date",
+              "value": "Mon, 16 Nov 2026 23:03:43 GMT"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "content-length",
+              "value": "50"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "content-encoding",
+              "value": "br"
+            },
+            {
+              "key": "etag",
+              "value": "W/\"2e-CiLg4ZO/eNdXS5jODLT6dOsIxAo\""
+            },
+            {
+              "key": "rndr-id",
+              "value": "67938b7f-850c-4805"
+            },
+            {
+              "key": "server",
+              "value": "cloudflare"
+            },
+            {
+              "key": "vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "x-powered-by",
+              "value": "Express"
+            },
+            {
+              "key": "x-render-origin-server",
+              "value": "Render"
+            },
+            {
+              "key": "cf-cache-status",
+              "value": "DYNAMIC"
+            },
+            {
+              "key": "cf-ray",
+              "value": "a5ba21708fcfc50d-GRU"
+            },
+            {
+              "key": "alt-svc",
+              "value": "h3=\":443\"; ma=86400"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"mensagem\": \"Monitoria removida com sucesso!\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Criar novo Usuário",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    }
+  ]
+}

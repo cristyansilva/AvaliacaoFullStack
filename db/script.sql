@@ -13,7 +13,8 @@ CREATE TABLE usuarios (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('aluno', 'monitor', 'professor'))
+    tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('aluno', 'monitor', 'professor')),
+    senha_hash VARCHAR(255)
 );
 
 -- Tabela: disciplinas (Grade curricular do curso de ADS)

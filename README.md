@@ -75,6 +75,27 @@ A aplicação permite aos acadêmicos encontrar horários, disciplinas atendidas
   - Configuração de roteamento SPA com `vercel.json`;
   - Preparado para publicação tanto do SPA React quanto da Landing Page Next.js.
 
+### 🔹 Integrante 4 — Front-end com API real, JWT e autenticação
+- [x] Cliente Axios compartilhado (`frontend/src/api.js`), configurado pela variável `VITE_API_URL` com a URL pública do backend no Render;
+- [x] Tela de login envia e-mail e senha a `POST /api/login`, guarda o JWT e os dados do usuário no Context API e no `localStorage`;
+- [x] `AuthProvider`/`useAuth` compartilham token e usuário; o cliente Axios envia o token no cabeçalho `Authorization`;
+- [x] Rotas protegidas redirecionam para `/login`; o retorno do login leva o usuário de volta à rota pretendida;
+- [x] Cadastro chama `POST /api/registro` e redireciona para o login ao concluir;
+- [x] Página `/monitorias-api` lista com `map()` os registros reais de `GET /api/monitorias`.
+
+#### Configurar a URL pública do Render
+1. No deploy do front-end (Vercel), crie a variável de ambiente `VITE_API_URL` com a URL base do serviço backend no Render, sem acrescentar `/api` ao final. Exemplo: `https://nome-do-servico.onrender.com`.
+2. Para desenvolvimento local, copie `frontend/.env.example` para `frontend/.env.local` e substitua o valor pela URL pública real do Render. A aplicação não usa localhost como fallback.
+3. Garanta que `JWT_SECRET` esteja configurada nas variáveis de ambiente do backend no Render e faça novo deploy do front-end após configurar `VITE_API_URL`.
+4. Se o banco no Render foi criado antes da autenticação, execute `db/migration-autenticacao.sql` nele para criar `usuarios.senha_hash`. Para a demonstração, cadastre uma conta com um e-mail ainda não usado; os usuários de seed antigos não têm senha cadastrada.
+
+#### Roteiro curto para o vídeo do Integrante 4
+1. Abra `/demonstracao`, clique em “Testar conexão com a API” e mostre o status HTTP.
+2. Abra `/monitorias-api` e mostre a lista recebida de `GET /api/monitorias`.
+3. Saia da conta e tente acessar `/`; mostre o redirecionamento para `/login`.
+4. Entre com um usuário cadastrado; mostre o retorno à página protegida e o nome do usuário na barra de navegação.
+5. Mostre brevemente `AuthContext.jsx` (createContext/Provider/useContext), `RequireAuth.jsx` (useNavigate/Outlet) e `frontend/src/api.js` (Axios com URL do Render).
+
 ### 🔹 AULA 10 — Modelagem e Banco de Dados Relacional (PostgreSQL)
 - [x] **Estruturação Física SQL (`db/script.sql`):** Script DDL e DML completo contendo a criação do banco de dados na raiz do repositório;
 - [x] **Relacionamentos Mapeados:**
@@ -83,6 +104,14 @@ A aplicação permite aos acadêmicos encontrar horários, disciplinas atendidas
 - [x] **Integridade de Dados:** Definição explicita de `PRIMARY KEY`, `FOREIGN KEY` com `REFERENCES ... ON DELETE CASCADE`, `NOT NULL`, `UNIQUE` e `CHECK`;
 - [x] **Povoamento DML:** Pelo menos 4 registros `INSERT` por tabela para testes do ambiente acadêmico;
 - [x] **Consultas Avançadas DQL:** `SELECT` estruturado com múltiplos `JOIN`s relacionando alunos, disciplinas, monitores, horários e status da reserva.
+
+### 🔹 AULA 12 — Parte 01: Validação de Dados com Joi
+- [x] **Por que validar:** Dados errados causam erros inesperados (como `500` vindo do banco), abrem espaço para vulnerabilidades e corrompem o banco (como um e-mail `nao-e-email` salvo como válido). A validação é uma camada de defesa: contra **SQL injection** a proteção principal continua sendo as queries parametrizadas (`$1`, `$2`) e contra **XSS** o escape na exibição dos dados;
+- [x] **Biblioteca Joi (`backend/validacao.js`):** Substitui os `if`s manuais dos middlewares de validação;
+- [x] **Schemas como a "receita" dos dados:** `schemaUsuario` e `schemaMonitoria` usam `Joi.string()`, `.email()`, `Joi.number()`, `.min()`, `.max()`, `.required()` e `.default()` (o `tipo` do usuário assume `aluno` quando não é enviado), com limites que espelham o `db/script.sql`;
+- [x] **Middleware de validação:** `validar(schema)` responde `400 Bad Request` com uma mensagem clara em português quando o dado está errado e chama `next()` quando está tudo certo. É usado no `POST` e `PUT` de usuários e monitorias;
+- [x] **Erros do cliente não viram `500`:** ID não numérico na URL responde `400` (via Joi), disciplina ou monitor inexistente responde `400` e e-mail já cadastrado responde `409`. O `500` fica só para falhas reais do servidor;
+- [x] **Página de demonstração (`backend/demo.html`):** Com a API rodando, abra `http://localhost:3001/demo` para ver o schema real e testar as rotas ao vivo. A tecla `R` oculta o roteiro de narração durante a gravação. A página não é servida com `NODE_ENV=production`.
 
 ---
 
@@ -103,10 +132,10 @@ O banco de dados relacional **PostgreSQL** é responsável pela persistência da
 | MÉTODO | ENDPOINT (URL) | DESCRIÇÃO / AÇÃO | MIDDLEWARE | STATUS CODES |
 | :---: | :--- | :--- | :---: | :---: |
 | **GET** | `/api/monitorias` | Lista todas as monitorias cadastradas | Log | `200 OK` |
-| **GET** | `/api/monitorias/:id` | Busca monitoria específica por ID | Log | `200 OK` / `404 Not Found` |
+| **GET** | `/api/monitorias/:id` | Busca monitoria específica por ID | Log + Validação do ID | `200 OK` / `400 Bad Request` / `404 Not Found` |
 | **POST** | `/api/monitorias` | Cadastra uma nova oferta de monitoria | Log + Validação | `201 Created` / `400 Bad Request` |
-| **PUT** | `/api/monitorias/:id` | Atualiza dados de uma monitoria | Log + Validação | `200 OK` / `400 Bad Request` / `404 Not Found` |
-| **DELETE** | `/api/monitorias/:id` | Remove uma monitoria cadastrada | Log | `200 OK` / `404 Not Found` |
+| **PUT** | `/api/monitorias/:id` | Atualiza dados de uma monitoria | Log + Validação do ID e do body | `200 OK` / `400 Bad Request` / `404 Not Found` |
+| **DELETE** | `/api/monitorias/:id` | Remove uma monitoria cadastrada | Log + Validação do ID | `200 OK` / `400 Bad Request` / `404 Not Found` |
 
 ---
 
@@ -120,6 +149,8 @@ AvaliacaoFullStack/
 │   ├── node_modules/     # Dependências (ignorado pelo Git)
 │   ├── .env              # Variáveis de ambiente (ignorado pelo Git)
 │   ├── package.json      # Dependências do servidor Express e scripts npm
+│   ├── validacao.js      # Schemas Joi e middleware de validação (Aula 12)
+│   ├── demo.html         # Página usada na gravação do vídeo, em /demo (Aula 12)
 │   └── server.js         # Servidor Express com Middlewares, Rotas e Regras
 ├── frontend/             # 💻 Aplicação Principal em React SPA (Vite)
 │   ├── src/              # Componentes, Páginas, Hooks e Testes Vitest
