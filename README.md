@@ -2,17 +2,17 @@
 
 > **Faculdade Municipal de Palhoça (FMP)**  
 > **Curso:** Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)  
-> **Disciplina:** Projeto Integrador III / Avaliação Full Stack  
-> **Professora Orientadora:** Daniela Amorim  
+> **Disciplina:** Avaliação Full Stack & Back-End
+> **Professores Orientadores:** Rafael Novo da Rosa  
 > **Alinhamento:** ONU ODS 4 — *Educação de Qualidade*
 
 ---
 
 ## 👥 Equipe de Desenvolvimento
 
-- **Cristyan das Neves Silva** — Front-End Lead & Arquitetura de Componentes
-- **Marlon da Silva** — Integração, Modelagem de Dados e Testes
-- **Lauren Helena De Oliveira Leao** — UI/UX Design & Engenharia de Requisitos
+- **Cristyan das Neves Silva** — Front-End Lead, Arquitetura de Componentes & Back-End
+- **Marlon da Silva** — Integração, Modelagem de Dados, SQL & Testes
+- **Lauren Helena De Oliveira Leao** — UI/UX Design, Engenharia de Requisitos & Documentação
 - **Taíse da Rosa** — Garantia de Qualidade, Estilização e Testes
 
 ---
@@ -21,7 +21,7 @@
 
 O **Monitoria Flow** é uma plataforma digital integrada desenvolvida para simplificar, organizar e democratizar o programa de monitorias do curso de Análise e Desenvolvimento de Sistemas da FMP. 
 
-A aplicação permite aos acadêmicos encontrar horários, disciplinas atendidas, corpo de monitores e agendar atendimentos individuais (**RF07**) ou coletivos pré-avaliação (**RF08**), com controle automatizado de vagas, validação de frequência e integração com comunidades de estudo.
+A aplicação permite aos acadêmicos encontrar horários, disciplinas atendidas, corpo de monitores e agendar atendimentos individuais (**RF07**) ou coletivos pré-avaliação (**RF08**), com controle automatizado de vagas, validação de frequência, persistência em **banco de dados PostgreSQL** e integração com comunidades de estudo.
 
 ---
 
@@ -39,7 +39,7 @@ A aplicação permite aos acadêmicos encontrar horários, disciplinas atendidas
 - [x] **JavaScript Moderno:** Aplicação de `let` e `const`, tipos primitivos e complexos (arrays de objetos), condicionais lógicas, loops `for`, funções com parâmetros e manipulação de eventos de interação em tela.
 
 ### 🔹 AULA 04 — React: Componentes, Hooks e Rotas
-- [x] **Projeto React com Vite:** Setup ultra-rápido com Vite v8;
+- [x] **Projeto React com Vite:** Setup ultra-rápido com Vite;
 - [x] **Componentização Reutilizável (`src/components/`):**
   - `Navbar`: Menu de navegação superior com links do React Router e alternância mobile;
   - `CardMonitoria`: Card de monitoria com badge, tópicos, cálculo de vagas e botão de ação interativo;
@@ -75,52 +75,154 @@ A aplicação permite aos acadêmicos encontrar horários, disciplinas atendidas
   - Configuração de roteamento SPA com `vercel.json`;
   - Preparado para publicação tanto do SPA React quanto da Landing Page Next.js.
 
+### 🔹 AULA 10 — Modelagem e Banco de Dados Relacional (PostgreSQL)
+- [x] **Estruturação Física SQL (`db/script.sql`):** Script DDL e DML completo contendo a criação do banco de dados na raiz do repositório;
+- [x] **Relacionamentos Mapeados:**
+  - **1:N**: `disciplinas` ➔ `monitorias` e `usuarios` (monitores) ➔ `monitorias`;
+  - **N:N**: `usuarios` (alunos) ↔ `monitorias` via tabela associativa `agendamentos`;
+- [x] **Integridade de Dados:** Definição explicita de `PRIMARY KEY`, `FOREIGN KEY` com `REFERENCES ... ON DELETE CASCADE`, `NOT NULL`, `UNIQUE` e `CHECK`;
+- [x] **Povoamento DML:** Pelo menos 4 registros `INSERT` por tabela para testes do ambiente acadêmico;
+- [x] **Consultas Avançadas DQL:** `SELECT` estruturado com múltiplos `JOIN`s relacionando alunos, disciplinas, monitores, horários e status da reserva.
+
 ---
 
-## 🌿 Estrutura de Branches do Projeto
+## 🗄️ Modelagem e Banco de Dados PostgreSQL (Aula 10)
 
-O desenvolvimento foi organizado em branches separadas com commits fracionados:
+O banco de dados relacional **PostgreSQL** é responsável pela persistência das informações. O script de criação e povoamento está localizado na pasta **`db/`** na raiz do projeto (`db/script.sql`).
 
-- `main` — Branch principal com a documentação do projeto e base inicial;
-- `aula-04` — Branch com a implementação completa de componentes React, useState e React Router;
-- `aula-05` — Branch com consumo de API externa (Axios), testes automatizados (Testing Library/Vitest) e aplicação institucional em Next.js + Tailwind CSS.
+### 📌 Mapeamento das Tabelas e Entidades:
+- **`usuarios`**: Tabela principal para armazenamento de alunos, monitores e professores (PK: `id`).
+- **`disciplinas`**: Cataloga as disciplinas ofertadas na grade curricular do curso de ADS (PK: `id`).
+- **`monitorias`**: Registra as ofertas de atendimento dos monitores (PK: `id`, FKs para `disciplinas` e `usuarios`).
+- **`agendamentos`**: Tabela associativa que resolve o relacionamento N:N entre alunos (`usuarios`) e `monitorias` (PK: `id`, FKs para `usuarios` e `monitorias`).
+
+---
+
+## 🛠️ Tabela de Endpoints da API (Back-End)
+
+| MÉTODO | ENDPOINT (URL) | DESCRIÇÃO / AÇÃO | MIDDLEWARE | STATUS CODES |
+| :---: | :--- | :--- | :---: | :---: |
+| **GET** | `/api/monitorias` | Lista todas as monitorias cadastradas | Log | `200 OK` |
+| **GET** | `/api/monitorias/:id` | Busca monitoria específica por ID | Log | `200 OK` / `404 Not Found` |
+| **POST** | `/api/monitorias` | Cadastra uma nova oferta de monitoria | Log + Validação | `201 Created` / `400 Bad Request` |
+| **PUT** | `/api/monitorias/:id` | Atualiza dados de uma monitoria | Log + Validação | `200 OK` / `400 Bad Request` / `404 Not Found` |
+| **DELETE** | `/api/monitorias/:id` | Remove uma monitoria cadastrada | Log | `200 OK` / `404 Not Found` |
+
+---
+
+## 📂 Estrutura de Pastas do Repositório
+
+```text
+AvaliacaoFullStack/
+├── db/                   # 🗄️ Modelagem e Scripts do Banco de Dados (Aula 10)
+│   └── script.sql        # Script DDL (CREATE TABLE), DML (INSERTs) e DQL (SELECT JOIN)
+├── backend/              # ⚙️ Servidor API RESTful (Node.js + Express)
+│   ├── node_modules/     # Dependências (ignorado pelo Git)
+│   ├── .env              # Variáveis de ambiente (ignorado pelo Git)
+│   ├── package.json      # Dependências do servidor Express e scripts npm
+│   └── server.js         # Servidor Express com Middlewares, Rotas e Regras
+├── frontend/             # 💻 Aplicação Principal em React SPA (Vite)
+│   ├── src/              # Componentes, Páginas, Hooks e Testes Vitest
+│   └── package.json      # Dependências do React e scripts de teste/build
+├── institucional-next/   # 🌐 Landing Page Institucional (Next.js + Tailwind CSS)
+├── docs/                 # 📄 Documentação complementar, diagramas e anexos
+├── vercel.json           # ⚙️ Configuração de rewrite para SPA na Vercel
+└── README.md             # 📝 Documentação principal do projeto
+```
 
 ---
 
 ## 🚀 Como Executar o Projeto Localmente
 
-### Pré-requisitos
-- Node.js (versão 18 ou superior)
-- Gerenciador de pacotes npm
+### 📋 Pré-requisitos
+Antes de começar, certifique-se de ter instalado em sua máquina:
+- **Node.js** (versão 18.x ou superior)
+- **NPM** (gerenciador de pacotes do Node)
+- **PostgreSQL** e **pgAdmin 4** (ou cliente SQL de sua preferência)
+- **Git**
 
-### 1. Aplicação Principal (React SPA)
-```bash
-# Instalar as dependências
-npm install
+---
 
-# Iniciar o servidor de desenvolvimento
-npm run dev
+### 1️⃣ Passo 1: Configurar o Banco de Dados (PostgreSQL)
 
-# Executar a suíte de testes automatizados
-npm run test
+1. Abra o **pgAdmin 4** e conecte-se ao seu servidor local do PostgreSQL.
+2. Crie um novo Banco de Dados chamado: `monitoria_flow_db`
+3. Selecione o banco criado e abra a ferramenta **Query Tool** (`Ctrl + Shift + Q`).
+4. Importe ou cole o conteúdo do arquivo localizado na raiz do projeto:
+   ```text
+   db/script.sql
+   ```
+5. Pressione **F5** (ou clique em *Execute*) para rodar o script.
+6. **Resultado Esperado:** O script criará as 4 tabelas (`usuarios`, `disciplinas`, `monitorias`, `agendamentos`), inserirá os dados de teste e exibirá os resultados do `SELECT` com `JOIN`.
 
-# Executar o linter
-npm run lint
+---
 
-# Gerar build de produção
-npm run build
-```
+### 2️⃣ Passo 2: Executar o Back-end (API Express)
 
-### 2. Página Institucional (Next.js + Tailwind CSS)
-```bash
-# Executar a partir da raiz:
-npm run dev:next
+1. No terminal, acesse a pasta do servidor:
+   ```bash
+   cd backend
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Crie um arquivo `.env` na pasta `backend/` e configure a porta de execução:
+   ```env
+   PORT=3000
+   ```
+4. Inicie o servidor em modo de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+5. **Confirmação:** O terminal exibirá:
+   ```text
+   🚀 Servidor rodando com sucesso na porta 3000!
+   ```
 
-# Ou dentro da pasta institucional-next:
-cd institucional-next
-npm install
-npm run dev
-```
+---
+
+### 3️⃣ Passo 3: Executar a Aplicação Principal (React SPA)
+
+1. Em uma nova janela/aba do terminal, acesse a pasta do Front-end a partir da raiz:
+   ```bash
+   cd frontend
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Execute a aplicação e a suíte de testes:
+   ```bash
+   # Iniciar o servidor de desenvolvimento Vite
+   npm run dev
+
+   # Executar a suíte de testes automatizados (Vitest)
+   npm run test
+
+   # Executar o linter
+   npm run lint
+
+   # Gerar o build de produção
+   npm run build
+   ```
+4. Acesse a aplicação no seu navegador (geralmente em `http://localhost:5173`).
+
+---
+
+### 4️⃣ Passo 4: Executar a Página Institucional (Next.js + Tailwind)
+
+1. Para rodar a landing page do Next.js a partir da raiz do projeto:
+   ```bash
+   npm run dev:next
+   ```
+2. Ou entre diretamente na pasta do Next.js:
+   ```bash
+   cd institucional-next
+   npm install
+   npm run dev
+   ```
+3. Acesse a landing page no seu navegador (geralmente em `http://localhost:3001`).
 
 ---
 
